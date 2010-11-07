@@ -1,7 +1,8 @@
 LIB=	mi
 LIBDIR=	/opt/local/lib
 
-SHLIB_MAJOR=	1
+SHLIB_MAJOR=	0
+SHLIB_MINOR=	1
 
 .PATH:	${.CURDIR}/btree ${.CURDIR}/stack
 WARNS?=	2
