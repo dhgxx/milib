@@ -91,7 +91,6 @@ bst_insert(const char *s, BSTREE *tp)
 void
 bst_free(bst_node *np)
 {
-
   if (np != NULL) {
 
 	if (np->left != NULL)
@@ -103,4 +102,25 @@ bst_free(bst_node *np)
 	free(np);
 	return;
   }
+}
+
+void
+bst_proc(bst_node *n, void (*func_p) (const char *s))
+{
+    bst_node *np;
+
+	if (n && func_p) {
+	  
+	  np = n;
+	  
+	  if (np) {
+		
+		func_p(np->node);
+		
+		if (np->left)
+		  bst_proc(np->left, func_p);
+		if (np->right)
+		  bst_proc(np->right, func_p);
+	  }
+	}
 }
