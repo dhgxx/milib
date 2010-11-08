@@ -23,7 +23,9 @@ int bst_empty(BSTREE *);
 bst_node *bst_find(const char *, bst_node *);
 void bst_insert(const char *, BSTREE *);
 
-void bst_proc(bst_node *, void (*) (const char *));
 void bst_free(bst_node *);
+void bst_preorder_proc(bst_node *, void (*) (const char *));
+void bst_inorder_proc(bst_node *, void (*) (const char *));
+void bst_postorder_proc(bst_node *, void (*) (const char *));
 
 #endif /* _BSTREE_H_ */

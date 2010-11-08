@@ -103,7 +103,7 @@ bst_free(bst_node *np)
 }
 
 void
-bst_proc(bst_node *n, void (*func_p) (const char *s))
+bst_preorder_proc(bst_node *n, void (*func_p) (const char *s))
 {
     bst_node *np;
 
@@ -114,11 +114,56 @@ bst_proc(bst_node *n, void (*func_p) (const char *s))
 	  if (np) {
 		
 		func_p(np->node);
+
+		if (np->left)
+		  bst_preorder_proc(np->left, func_p);
+		
+		if (np->right)
+		  bst_preorder_proc(np->right, func_p);
+	  }
+	}
+}
+
+void
+bst_inorder_proc(bst_node *n, void (*func_p) (const char *s))
+{
+    bst_node *np;
+
+	if (n && func_p) {
+	  
+	  np = n;
+	  
+	  if (np) {
 		
 		if (np->left)
-		  bst_proc(np->left, func_p);
+		  bst_inorder_proc(np->left, func_p);
+		
+		func_p(np->node);
+		
 		if (np->right)
-		  bst_proc(np->right, func_p);
+		  bst_inorder_proc(np->right, func_p);
+	  }
+	}
+}
+
+void
+bst_postorder_proc(bst_node *n, void (*func_p) (const char *s))
+{
+    bst_node *np;
+
+	if (n && func_p) {
+	  
+	  np = n;
+	  
+	  if (np) {
+		
+		if (np->left)
+		  bst_postorder_proc(np->left, func_p);
+		
+		if (np->right)
+		  bst_postorder_proc(np->right, func_p);
+		
+		func_p(np->node);
 	  }
 	}
 }
