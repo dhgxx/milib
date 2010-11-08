@@ -7,10 +7,17 @@
 
 #define BSTNODE_ENT_SIZE 256
 
+typedef enum _bst_traverse_order {
+  BST_POSTORDER,
+  BST_INORDER,
+  BST_PREORDER
+} BST_TRV_ORDER;
+
 typedef struct _bst_node {
   char node[BSTNODE_ENT_SIZE];
   struct _bst_node *left;
   struct _bst_node *right;
+  int deleted;
 } bst_node;
 
 typedef struct _bstree {
@@ -20,12 +27,11 @@ typedef struct _bstree {
 bst_node *bst_mknode(const char *);
 BSTREE *bst_init(void);
 int bst_empty(BSTREE *);
-bst_node *bst_find(const char *, bst_node *);
-void bst_insert(const char *, BSTREE *);
+bst_node *bst_find(const char *, BSTREE *);
+void bst_ins(const char *, BSTREE *);
+void bst_del(const char *, BSTREE *);
 
-void bst_free(bst_node *);
-void bst_preorder_proc(bst_node *, void (*) (const char *));
-void bst_inorder_proc(bst_node *, void (*) (const char *));
-void bst_postorder_proc(bst_node *, void (*) (const char *));
+void bst_free(BSTREE *);
+void bst_proc(BSTREE *, BST_TRV_ORDER, void (*) (const char *));
 
 #endif /* _BSTREE_H_ */
