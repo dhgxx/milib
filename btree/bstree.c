@@ -28,7 +28,7 @@ bst_init(void)
 	return (NULL);
 
   tp->root = NULL;
-  return tp;  
+  return (tp);  
 }
   
 int
