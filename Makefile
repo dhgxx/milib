@@ -1,16 +1,11 @@
-LIB=	mi
-LIBDIR=	/opt/local/lib
+.if !defined(OSTYPE)
+OSTYPE=`uname`
+.endif
 
-SHLIB_MAJOR=	1
-SHLIB_MINOR=	0
-
-.PATH:	${.CURDIR}/btree ${.CURDIR}/stack
-WARNS?=	2
-
-SRCS=	bstree.c stack.c
-INCS=	bstree.h stack.h
-INCSDIR=	/opt/local/include
-
-NOPROFILE=	yes
-
-.include <bsd.lib.mk>
+.if ${OSTYPE} == FreeBSD
+.include "${.CURDIR}/Makefile.freebsd"
+.else
+.if ${OSTYPE} == OpenBSD
+.include "${.CURDIR}/Makefile.openbsd"
+.endif
+.endif
