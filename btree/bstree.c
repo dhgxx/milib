@@ -27,13 +27,10 @@ BSTREE *
 bst_init(void)
 {
   BSTREE *tp;
-
-  tp = malloc(sizeof(BSTREE));
 			  
-  if (tp) {
+  if ((tp = malloc(sizeof(BSTREE))))
 	tp->root = NULL;
-  }
-  
+
   return (tp);
 }
   
@@ -108,6 +105,7 @@ _bst_ins(const char *s, bst_node *n)
   if (np) {
 
 	m = strncmp(s, np->node, strlen(s) + 1);
+	
 	if (0 > m || 0 == m) {
 	  if (!np->left)
 		np->left = bst_mknode(s);
