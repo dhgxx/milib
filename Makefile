@@ -1,6 +1,6 @@
 .include <bsd.own.mk>
 
-OBJDIR=${.CURDIR}/obj
+NO_OBJ=
 NO_PROFILE=	yes
 
 LIB=	mi
