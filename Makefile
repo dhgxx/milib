@@ -11,4 +11,6 @@ SRCS=	bstree.c stack.c
 INCS=	bstree.h stack.h
 INCSDIR=	/opt/local/include
 
+NOPROFILE=	yes
+
 .include <bsd.lib.mk>
