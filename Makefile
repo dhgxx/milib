@@ -1,3 +1,8 @@
+.include <bsd.own.mk>
+
+OBJDIR=${.CURDIR}/obj
+NO_PROFILE=	yes
+
 LIB=	mi
 LIBDIR=	/opt/local/lib
 
@@ -10,7 +15,5 @@ WARNS?=	2
 SRCS=	bstree.c stack.c
 INCS=	bstree.h stack.h
 INCSDIR=	/opt/local/include
-
-NO_PROFILE=	yes
 
 .include <bsd.lib.mk>
