@@ -8,6 +8,7 @@ dl_mknode(const char *s)
   if (s && (n = malloc(sizeof(dl_node)))) {
 	bzero(n->node, DL_ENT_SIZE);
 	strncpy(n->node, s, strlen(s) + 1);
+	n->deleted = 0;
 	n->pre = NULL;
 	n->next = NULL;
   }
@@ -53,14 +54,113 @@ dl_append(const char *s, DLIST *dl)
 
 	if (dl_empty(dl)) {
 	  dl->head = n;
-	  n->pre = dl->head;
 	} else {
-	  dl->cur->next = n;
-	  n->pre = dl->cur;
+	  dl->tail->next = n;
+	  n->pre = dl->tail;
 	}
 	
 	dl->cur = n;
 	dl->tail = n;
+	dl->len++;
+	return (1);
+  }
+
+  return (0);
+}
+
+int
+dl_ins_at_pos(const char *s, int pos,  DLIST *dl)
+{
+  int i;
+  dl_node *new, *np;
+  
+  if (s && dl) {
+	
+	new = dl_mknode(s);
+	dl->cur = new;
+	
+	if (dl_empty(dl)) {
+
+	  dl->head = dl->tail = new;
+	  dl->len++;
+	  return (1);
+	}
+
+	if (pos <= 0) {
+
+	  np = dl->head;
+	  new->next = np;
+	  np->pre = new;
+	  
+	  dl->head = new;
+	  dl->cur = new;
+	  dl->len++;
+	  return (1);
+	}
+
+	if (pos > 0 && pos <= dl->len) {
+
+	  np = dl->head;
+
+	  for (i = 1; i < pos; i++)
+		np = np->next;
+
+	  new->next = np;
+	  new->pre = np->pre;
+	  np->pre = new;
+	  dl->len++;
+	  return (1);  
+	}
+
+	if (pos > dl->len) {
+
+	  np = dl->tail;
+	  np->next = new;
+	  new->pre = np;
+	  dl->len++;
+	  return (1);
+	}
+  }
+
+  return (0);
+}
+
+int
+dl_ins_at_val(const char *s, const char *t, DLIST *dl, int before)
+{
+  dl_node *new, *np;
+  
+  if (s && t && dl) {
+
+	new = dl_mknode(s);
+	dl->cur = new;
+	
+	if (dl_empty(dl)) {
+	  dl->head = dl->tail = new;
+	  dl->len++;
+	  return (1);
+	}
+	
+	np = dl->head;
+	while (np && (0 != strncmp(t, np->node, strlen(t) + 1)))
+	  np = np->next;
+
+	if (before == 1)
+	  np = np->pre;
+	
+	if (np == dl->head) {
+	  dl_ins_at_pos(s, 0, dl);
+	  return (1);
+	}
+
+	if (np == dl->tail) {
+	  dl_ins_at_pos(s, dl->len, dl);
+	  return (1);
+	}
+
+	new->pre = np;
+	new->next = np->next;
+	np->next = new;
 	dl->len++;
 	return (1);
   }
