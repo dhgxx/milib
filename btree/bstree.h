@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define BSTNODE_ENT_SIZE 512
+#define BSTNODE_ENT_SIZE 256
 
 typedef enum _bst_traverse_order {
   BST_POSTORDER,
