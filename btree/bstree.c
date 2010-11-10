@@ -1,7 +1,7 @@
 #include "bstree.h"
 
 static bst_node *_bst_loc(const char *, bst_node *);
-static void _bst_ins(const char *, bst_node *);
+static void _bst_ins(const char *, bst_node *, int);
 static void _bst_proc(bst_node *, BST_TRV_ORDER, void (*) (const char *));
 static void _bst_free(bst_node *);
 
@@ -85,17 +85,17 @@ _bst_loc(const char *s, bst_node *n)
 }
 
 void
-bst_ins(const char *s, BSTREE *tp)
+bst_ins(const char *s, BSTREE *tp, int ic)
 {  
   if (tp->root) {
-	_bst_ins(s, tp->root);
+	_bst_ins(s, tp->root, ic);
   } else {
 	tp->root = bst_mknode(s);
   }
 }
 
 static void
-_bst_ins(const char *s, bst_node *n)
+_bst_ins(const char *s, bst_node *n, int ic)
 {
   int m;
   bst_node *np;
@@ -105,19 +105,28 @@ _bst_ins(const char *s, bst_node *n)
   if (np) {
 
 	m = strncmp(s, np->node, strlen(s) + 1);
-	
-	if (0 > m || 0 == m) {
-	  if (!np->left)
-		np->left = bst_mknode(s);
-	  else
-		_bst_ins(s, np->left);
+
+	if (ic == 1) {
+	  if (0 > m || 0 == m) {
+		if (!np->left)
+		  np->left = bst_mknode(s);
+		else
+		  _bst_ins(s, np->left, ic);
+	  }
+	} else if (ic == 0) {
+	  if (0 > m) {
+		if (!np->left)
+		  np->left = bst_mknode(s);
+		else
+		  _bst_ins(s, np->left, ic);
+	  }
 	}
 	
 	if (0 < m) {
 	  if (!np->right)
 		np->right = bst_mknode(s);
 	  else
-		_bst_ins(s, np->right);
+		_bst_ins(s, np->right, ic);
 	}
   }
 }

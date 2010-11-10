@@ -6,7 +6,6 @@ LIBDIR=	/opt/local/lib
 
 SHLIB_MAJOR=	1
 SHLIB_MINOR=	0
-SHLIB_NAME=		lib${LIB}.so.${SHLIB_MAJOR}.${SHLIB_MINOR}
 
 .PATH:	${.CURDIR}/btree ${.CURDIR}/stack
 WARNS?=	2

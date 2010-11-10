@@ -17,7 +17,7 @@ typedef struct _bst_node {
   char node[BSTNODE_ENT_SIZE];
   struct _bst_node *left;
   struct _bst_node *right;
-  int deleted;
+  unsigned int deleted;
 } bst_node;
 
 typedef struct _bstree {
@@ -28,7 +28,7 @@ bst_node *bst_mknode(const char *);
 BSTREE *bst_init(void);
 int bst_empty(BSTREE *);
 bst_node *bst_find(const char *, BSTREE *);
-void bst_ins(const char *, BSTREE *);
+void bst_ins(const char *, BSTREE *, int);
 void bst_del(const char *, BSTREE *);
 
 void bst_free(BSTREE *);
