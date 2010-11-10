@@ -23,17 +23,17 @@ install: libs incs
 
 # don't install pic if there's any.
 libs:
-	${INSTALL} -C -d -o ${BINOWN} -g ${BINGRP} -m ${NOBINMODE} \
+	${INSTALL} -C -o ${BINOWN} -g ${BINGRP} -m ${NOBINMODE} \
 		${.CURDIR}/lib${LIB}.{a,so.${SHLIB_MAJOR}.${SHLIB_MINOR}} ${LIBDIR}
-	${INSTALL} -C -d -o ${BINOWN} -g ${BINGRP} -m ${NOBINMODE} \
+	${INSTALL} -C -o ${BINOWN} -g ${BINGRP} -m ${NOBINMODE} \
 		${.CURDIR}/lib${LIB}_{p,pic}.a ${LIBDIR}
 
 incs:
-	${INSTALL} -C -d -o ${BINOWN} -g ${BINGRP} -m ${NOBINMODE} \
+	${INSTALL} -C -o ${BINOWN} -g ${BINGRP} -m ${NOBINMODE} \
 		${.CURDIR}/btree/bstree.h ${INCSDIR}
-	${INSTALL} -C -d -o ${BINOWN} -g ${BINGRP} -m ${NOBINMODE} \
+	${INSTALL} -C -o ${BINOWN} -g ${BINGRP} -m ${NOBINMODE} \
 		${.CURDIR}/list/dlist.h ${INCSDIR}
-	${INSTALL} -C -d -o ${BINOWN} -g ${BINGRP} -m ${NOBINMODE} \
+	${INSTALL} -C -o ${BINOWN} -g ${BINGRP} -m ${NOBINMODE} \
 		 ${.CURDIR}/stack/stack.h ${INCSDIR}
 .endif
 
