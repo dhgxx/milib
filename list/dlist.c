@@ -6,7 +6,7 @@ dl_mknode(const char *s)
   dl_node *n;
   
   if (s && (n = malloc(sizeof(dl_node)))) {
-	bzero(n->node, DLNODE_ENT_SIZE);
+	bzero(n->node, DL_ENT_SIZE);
 	strncpy(n->node, s, strlen(s) + 1);
 	n->pre = NULL;
 	n->next = NULL;

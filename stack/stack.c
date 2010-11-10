@@ -33,7 +33,7 @@ st_mknode(const char *item)
 
   if (item && (np = malloc(sizeof(st_node)))) {
 
-	bzero(np->entry, STACK_ENT_SIZE);
+	bzero(np->entry, ST_ENT_SIZE);
 	strlcpy(np->entry, item, strlen(item) + 1);
 	np->next = NULL;
 
@@ -66,11 +66,11 @@ st_pop(STACK *s)
   st_node *np;
   
   if (!st_empty(s)
-	  && (item = malloc(sizeof(STACK_ENT_SIZE)))) {
+	  && (item = malloc(sizeof(ST_ENT_SIZE)))) {
   
 	np = s->top;
 	s->top = np->next;
-	bzero(item, STACK_ENT_SIZE);
+	bzero(item, ST_ENT_SIZE);
 	strlcpy(item, np->entry, strlen(np->entry) + 1);
 	np->next = NULL;
 	free(np);

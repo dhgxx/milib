@@ -12,7 +12,7 @@ bst_mknode(const char *s)
   
   if (s && (np = malloc(sizeof(bst_node)))) {
 
-	bzero(np->node, BSTNODE_ENT_SIZE);
+	bzero(np->node, BST_ENT_SIZE);
 	strlcpy(np->node, s, strlen(s) + 1);
 	np->left = NULL;
 	np->right = NULL;

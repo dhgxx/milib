@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define BSTNODE_ENT_SIZE 256
+#define BST_ENT_SIZE 256
 
 typedef enum _bst_traverse_order {
   BST_POSTORDER,
@@ -14,7 +14,7 @@ typedef enum _bst_traverse_order {
 } BST_TRV_ORDER;
 
 typedef struct _bst_node {
-  char node[BSTNODE_ENT_SIZE];
+  char node[BST_ENT_SIZE];
   struct _bst_node *left;
   struct _bst_node *right;
   unsigned int deleted;

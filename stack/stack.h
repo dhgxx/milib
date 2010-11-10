@@ -7,10 +7,10 @@
 
 
 /*A string stack implementation*/
-#define STACK_ENT_SIZE 256
+#define ST_ENT_SIZE 256
 
 typedef struct _st_node {
-  char entry[STACK_ENT_SIZE];
+  char entry[ST_ENT_SIZE];
   struct _st_node *next;
 } st_node;
 

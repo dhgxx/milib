@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DLNODE_ENT_SIZE 256
+#define DL_ENT_SIZE 256
 
 typedef struct _dl_node {
-  char node[DLNODE_ENT_SIZE];
+  char node[DL_ENT_SIZE];
   struct _dl_node *pre;
   struct _dl_node *next;
   unsigned int deleted;
