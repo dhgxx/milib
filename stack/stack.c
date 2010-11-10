@@ -1,26 +1,22 @@
 #include "stack.h"
 
-void
-st_error(const char *message)
-{
-  if (message)
-	(void)fprintf(stderr, "%s\n", message);
-  else
-  	(void)fprintf(stderr, "Null message! Not printed!\n");
-}
-
 STACK *
 st_init(void)
 {
   STACK *s;
   
-  return (s = malloc(sizeof(STACK)));
+  if ((s = malloc(sizeof(STACK)))) {
+	s->size = 0;
+	return (s);
+  }
+
+  return (NULL);
 }
 
 int
 st_empty(STACK *s)
 {
-  if (s)  
+  if (s)
 	return (s->top == NULL) ? 1 : 0;
   
   return (0);
@@ -53,6 +49,7 @@ st_push(const char *item, STACK *s)
 	np = st_mknode(item);
 	np->next = s->top;
 	s->top = np;
+	s->size++;
 	return (1);
   }
 
@@ -73,6 +70,7 @@ st_pop(STACK *s)
 	bzero(item, ST_ENT_SIZE);
 	strlcpy(item, np->entry, strlen(np->entry) + 1);
 	np->next = NULL;
+	s->size--;
 	free(np);
 
 	return (item);
@@ -82,7 +80,7 @@ st_pop(STACK *s)
 }
 
 void
-st_clear(STACK *s)
+st_free(STACK *s)
 {
   char *item;
 

@@ -16,22 +16,16 @@ typedef struct _st_node {
 
 typedef struct _stack {
   st_node *top;
+  unsigned int size;
 } STACK;
 
-void st_error(const char *);
 
-/* return NULL if failed, a pointer to a stack otherwise. */
 STACK *st_init(void);
-
-/* return 0 if stack empty, 1 otherwise */
 int st_empty(STACK *);
-
-/* return NULL if failed, a pointer to stack node if success. */
 char *st_pop(STACK *);
 int st_push(const char *, STACK *);
 st_node *st_mknode(const char *);
-
 void st_proc(STACK *, void (*) (const char *));
-void st_clear(STACK *);
+void st_free(STACK *);
 
 #endif /* _STACK_H_ */
