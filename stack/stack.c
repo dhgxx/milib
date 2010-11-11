@@ -3,34 +3,33 @@
 STACK *
 st_init(void)
 {
-  STACK *s;
+  STACK *st;
   
-  if ((s = malloc(sizeof(STACK)))) {
-	s->size = 0;
-	return (s);
+  if ((st = malloc(sizeof(STACK)))) {
+	st->size = 0;
   }
 
-  return (NULL);
+  return (st);
 }
 
 int
-st_empty(STACK *s)
+st_empty(STACK *st)
 {
-  if (s)
-	return (s->top == NULL) ? 1 : 0;
+  if (st)
+	return (st->top == NULL) ? 1 : 0;
   
   return (0);
 }
 
 st_node *
-st_mknode(const char *item)
+st_mknode(const char *str)
 {
   st_node  *np;
 
-  if (item && (np = malloc(sizeof(st_node)))) {
+  if (str && (np = malloc(sizeof(st_node)))) {
 
 	bzero(np->entry, ST_ENT_SIZE);
-	strlcpy(np->entry, item, strlen(item) + 1);
+	strlcpy(np->entry, str, strlen(str) + 1);
 	np->next = NULL;
 
 	return (np);
@@ -40,16 +39,16 @@ st_mknode(const char *item)
 }
 
 int
-st_push(const char *item, STACK *s)
+st_push(const char *str, STACK *st)
 {
   st_node  *np;
   
-  if (s && item) {
+  if (st && str) {
   
-	np = st_mknode(item);
-	np->next = s->top;
-	s->top = np;
-	s->size++;
+	np = st_mknode(str);
+	np->next = st->top;
+	st->top = np;
+	st->size++;
 	return (1);
   }
 
@@ -57,52 +56,52 @@ st_push(const char *item, STACK *s)
 }
 
 char *
-st_pop(STACK *s)
+st_pop(STACK *st)
 {
-  char *item;
+  char *str;
   st_node *np;
   
-  if (!st_empty(s)
-	  && (item = malloc(sizeof(ST_ENT_SIZE)))) {
+  if (!st_empty(st)
+	  && (str = malloc(sizeof(ST_ENT_SIZE)))) {
   
-	np = s->top;
-	s->top = np->next;
-	bzero(item, ST_ENT_SIZE);
-	strlcpy(item, np->entry, strlen(np->entry) + 1);
+	np = st->top;
+	st->top = np->next;
+	bzero(str, ST_ENT_SIZE);
+	strlcpy(str, np->entry, strlen(np->entry) + 1);
 	np->next = NULL;
-	s->size--;
+	st->size--;
 	free(np);
 
-	return (item);
+	return (str);
   }
 
   return (NULL);
 }
 
 void
-st_free(STACK *s)
+st_free(STACK *st)
 {
-  char *item;
+  char *str;
 
-  while (!st_empty(s)) {
+  while (!st_empty(st)) {
 	
-	item = st_pop(s);
+	str = st_pop(st);
 	
-	if (item) {
-	  free(item);
-	  item = NULL;
+	if (str) {
+	  free(str);
+	  str = NULL;
 	}
   }
 }
 
 void
-st_proc(STACK *s, void (*func_p) (const char *item))  
+st_proc(STACK *st, void (*func_p) (const char *str))  
 {
   st_node *np;
   
-  if (!st_empty(s)) {
+  if (!st_empty(st)) {
   
-	np = s->top;
+	np = st->top;
   
 	while (np != NULL) {
 	  func_p(np->entry);

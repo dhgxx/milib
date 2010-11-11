@@ -6,14 +6,14 @@ static void _bst_proc(bst_node *, BST_TRV_ORDER, void (*) (const char *));
 static void _bst_free(bst_node *);
 
 bst_node *
-bst_mknode(const char *s)
+bst_mknode(const char *str)
 {
   bst_node *np;
   
-  if (s && (np = malloc(sizeof(bst_node)))) {
+  if (str && (np = malloc(sizeof(bst_node)))) {
 
 	bzero(np->node, BST_ENT_SIZE);
-	strlcpy(np->node, s, strlen(s) + 1);
+	strlcpy(np->node, str, strlen(str) + 1);
 	np->left = NULL;
 	np->right = NULL;
 	np->deleted = 0;
@@ -41,13 +41,13 @@ bst_empty(BSTREE *tp)
 }
 
 bst_node *
-bst_find(const char *s, BSTREE *tp)
+bst_find(const char *str, BSTREE *tp)
 {
-  return (_bst_loc(s, tp->root));
+  return (_bst_loc(str, tp->root));
 }
 
 static bst_node *
-_bst_loc(const char *s, bst_node *n)
+_bst_loc(const char *str, bst_node *n)
 {
   int m;
   bst_node *cur, *np;
@@ -58,21 +58,21 @@ _bst_loc(const char *s, bst_node *n)
 
 	if (!np->deleted) {
 	  
-	  m = strncmp(s, np->node, strlen(s) + 1);
+	  m = strncmp(str, np->node, strlen(str) + 1);
 	
 	  if (0 == m)
 		return (np);
 	
 	  if (0 > m) {
 		if (np->left)
-		  cur = np = _bst_loc(s, np->left);
+		  cur = np = _bst_loc(str, np->left);
 		else
 		  return (np);
 	  }
 	  
 	  if (0 < m) {
 		if (np->right)
-		  cur = np = _bst_loc(s, np->right);
+		  cur = np = _bst_loc(str, np->right);
 		else
 		  return (np);
 	  }
@@ -85,61 +85,65 @@ _bst_loc(const char *s, bst_node *n)
 }
 
 void
-bst_ins(const char *s, BSTREE *tp, int ic)
+bst_ins(const char *str, BSTREE *tp, int ic)
 {  
   if (tp->root) {
-	_bst_ins(s, tp->root, ic);
+	_bst_ins(str, tp->root, ic);
   } else {
-	tp->root = bst_mknode(s);
+	tp->root = bst_mknode(str);
   }
 }
 
 static void
-_bst_ins(const char *s, bst_node *n, int ic)
+_bst_ins(const char *str, bst_node *pos, int ic)
 {
   int m;
   bst_node *np;
 
-  np = _bst_loc(s, n);
+  np = _bst_loc(str, pos);
   
   if (np) {
 
-	m = strncmp(s, np->node, strlen(s) + 1);
+	m = strncmp(str, np->node, strlen(str) + 1);
 
 	if (ic == 1) {
 	  if (0 > m || 0 == m) {
 		if (!np->left)
-		  np->left = bst_mknode(s);
+		  np->left = bst_mknode(str);
 		else
-		  _bst_ins(s, np->left, ic);
+		  _bst_ins(str, np->left, ic);
 	  }
 	} else if (ic == 0) {
 	  if (0 > m) {
 		if (!np->left)
-		  np->left = bst_mknode(s);
+		  np->left = bst_mknode(str);
 		else
-		  _bst_ins(s, np->left, ic);
+		  _bst_ins(str, np->left, ic);
 	  }
 	}
 	
 	if (0 < m) {
 	  if (!np->right)
-		np->right = bst_mknode(s);
+		np->right = bst_mknode(str);
 	  else
-		_bst_ins(s, np->right, ic);
+		_bst_ins(str, np->right, ic);
 	}
   }
 }
 
-void
-bst_del(const char *s, BSTREE *tp)
+int
+bst_del(const char *str, BSTREE *tp)
 {
   bst_node *np;
 
-  np = _bst_loc(s, tp->root);
+  np = _bst_loc(str, tp->root);
 
-  if (np != tp->root)
+  if (np != tp->root) {
 	np->deleted = 1;
+	return (1);
+  }
+
+  return (0);
 }
 
 void
@@ -165,22 +169,22 @@ _bst_free(bst_node *np)
 }
 
 void
-bst_proc(BSTREE *tp, BST_TRV_ORDER t, void (*func_p) (const char *s))
+bst_proc(BSTREE *tp, BST_TRV_ORDER odr, void (*func_p) (const char *str))
 {
-  _bst_proc(tp->root, t, func_p);
+  _bst_proc(tp->root, odr, func_p);
 }
 
 static void
-_bst_proc(bst_node *n, BST_TRV_ORDER t, void (*func_p) (const char *s))
+_bst_proc(bst_node *beg, BST_TRV_ORDER odr, void (*func_p) (const char *str))
 {
     bst_node *np;
 
-	if (n && func_p) {
+	if (beg && func_p) {
 	  
-	  np = n;
+	  np = beg;
 	  
 	  if (np) {
-		switch (t) {
+		switch (odr) {
 		case BST_PREORDER:
 		  if (!np->deleted)
 			func_p(np->node);
