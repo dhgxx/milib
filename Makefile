@@ -6,23 +6,18 @@ OSNAME!=	uname -s
 
 .if ${OSNAME} == "FreeBSD"
 MKFILE=		Makefile.fbsd
+INST=		install
 .elif ${OSNAME} == "OpenBSD"
 MKFILE=		Makefile.obsd
+INST=		install includes
 .endif
 
-all: ${OSNAME}
+all:
+	@${MAKE} -f ${MKFILE}
 
-install: ${OSNAME}-install
+clean:
+	@${MAKE} -f ${MKFILE} clean
 
-FreeBSD:
-.include "${.CURDIR}/Makefile.fbsd"
-
-FreeBSD-install:
-	@${MAKE} -f ${MKFILE} install
-
-OpenBSD:
-.include "${.CURDIR}/Makefile.obsd"
-
-OpenBSD-install:
-	@${MAKE} -f ${MKFILE} install includes
+install:
+	@${MAKE} -f ${MKFILE} ${INST}
 
