@@ -4,19 +4,19 @@
 static void _dl_ins_before(dl_node *, dl_node *);
 
 dl_node *
-dl_mknode(const char *s)
+dl_mknode(const char *str)
 {
-  dl_node *n;
+  dl_node *np;
   
-  if (s && (n = malloc(sizeof(dl_node)))) {
-	bzero(n->node, DL_ENT_SIZE);
-	strncpy(n->node, s, strlen(s) + 1);
-	n->deleted = 0;
-	n->pre = NULL;
-	n->next = NULL;
+  if (str && (np = malloc(sizeof(dl_node)))) {
+	bzero(np->node, DL_ENT_SIZE);
+	strncpy(np->node, str, strlen(str) + 1);
+	np->deleted = 0;
+	np->pre = NULL;
+	np->next = NULL;
   }
 
-  return (n);
+  return (np);
 }
 
 DLIST *
@@ -50,13 +50,13 @@ dl_empty(DLIST *dl)
 }
 
 int
-dl_append(const char *s, DLIST *dl)
+dl_append(const char *str, DLIST *dl)
 {
   dl_node *new;
   
   if (dl) {
 	
-	new = dl_mknode(s);
+	new = dl_mknode(str);
 
 	if (dl_empty(dl)) {
 	  dl->head = new;
@@ -95,98 +95,87 @@ _dl_ins_before(dl_node *np, dl_node *new)
 }
 
 int
-dl_ins_at_pos(const char *s, int pos, DLIST *dl)
+dl_ins_at_pos(const char *str, int pos, DLIST *dl)
 {
   int i;
   dl_node *new, *np;
   
-  if (s && dl) {
+  if (str && dl) {
 	
-	new = dl_mknode(s);
-	dl->cur = new;
+	new = dl_mknode(str);
 	
 	if (dl_empty(dl)) {
 
-	  dl->head = dl->tail = new;
+	  dl->cur = dl->head = dl->tail = new;
 	  dl->len++;
-	  return (1);
-	}
+	} else {
 
-	if (pos <= 0) {
-
-	  new->next = dl->head;
-	  dl->head->pre = new;
-	  dl->head = new;
-	  dl->len++;
-	  return (1);
-	}
-
-	if (pos > 0 && pos < dl->len) {
-
-	  np = dl->head;
-
-	  for (i = 0; i < pos; i++)
-		np = np->next;
-
-	  _dl_ins_before(np, new);
-	  dl->len++;
-	  return (1);  
-	}
-
-	if (pos >= dl->len) {
+	  dl->cur = new;
 	  
-	  new->pre = dl->tail->pre;
-	  dl->tail->next = new;
-	  dl->tail = new;
-	  dl->len++;
-	  return (1);
+	  if (pos <= 0) {
+
+		new->next = dl->head;
+		dl->head->pre = new;
+		dl->head = new;
+		dl->len++;
+	  }
+
+	  if (pos > 0 && pos < dl->len) {
+
+		np = dl->head;
+
+		for (i = 0; i < pos && np; i++)
+		  np = np->next;
+
+		_dl_ins_before(np, new);
+		dl->len++;
+	  }
+
+	  if (pos >= dl->len) {
+	  
+		new->pre = dl->tail->pre;
+		dl->tail->next = new;
+		dl->tail = new;
+		dl->len++;
+	  }
 	}
+
+	return (1);
   }
 
   return (0);
 }
 
 int
-dl_ins_at_val(const char *s, const char *t, DLIST *dl)
+dl_ins_at_val(const char *str, const char *pos, DLIST *dl)
 {
   dl_node *new, *np;
   
-  if (s && t && dl) {
+  if (str && pos && dl) {
 
-	new = dl_mknode(s);
-	dl->cur = new;
+	new = dl_mknode(str);
 	
 	if (dl_empty(dl)) {
-	  dl->head = dl->tail = new;
+	  
+	  dl->cur = dl->head = dl->tail = new;
 	  dl->len++;
-	  return (1);
-	}
-	
-	np = dl->head;
-	while (np) {
+	} else {
 
-	  if (0 == strncmp(t, np->node, strlen(t) + 1)) {
+	  dl->cur = new;
+	  np = dl->head;
+	  
+	  while (np) {
+
+		if (0 == strncmp(pos, np->node, strlen(pos) + 1)) {
 	
-		if (np == dl->head) {
-		  new->next = dl->head;
-		  dl->head->pre = new;
-		  dl->head = new;
+		  _dl_ins_before(np, new);
 		  dl->len++;
-		  return (1);
 		}
-
-		_dl_ins_before(np, new);
-		dl->len++;
-		return (1);
-	  }
 	  	 
-	  np = np->next;
+		np = np->next;
+	  }
 	}
 
-	new->pre = dl->tail->pre;
-	dl->tail->next = new;
-	dl->tail = new;
-	dl->len++;
 	return (1);
   }
   
@@ -194,13 +183,13 @@ dl_ins_at_val(const char *s, const char *t, DLIST *dl)
 }
 
 int
-dl_delete(const char *s, DLIST *dl)
+dl_delete(const char *str, DLIST *dl)
 {  
-  if (s && !dl_empty(dl)) {
+  if (str && !dl_empty(dl)) {
 	
 	dl->cur = dl->head;
 	while (dl->cur) {
-	  if (0 == strncmp(s, dl->cur->node, strlen(s) + 1)) {
+	  if (0 == strncmp(str, dl->cur->node, strlen(str) + 1)) {
 		dl->cur->deleted = 1;
 		dl->len--;
 		return (1);
@@ -213,7 +202,7 @@ dl_delete(const char *s, DLIST *dl)
 }
 
 void
-dl_proc(DLIST *dl, void (*func_p) (const char *s))
+dl_proc(DLIST *dl, void (*func_p) (const char *str))
 {
   if (dl && func_p) {
 	if (!dl_empty(dl)) {
