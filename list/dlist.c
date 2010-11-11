@@ -1,6 +1,7 @@
 #include "dlist.h"
 
-static void _dl_ins(dl_node *, dl_node *);
+/* static void _dl_ins_after(dl_node *, dl_node *); */
+static void _dl_ins_before(dl_node *, dl_node *);
 
 dl_node *
 dl_mknode(const char *s)
@@ -39,6 +40,8 @@ dl_empty(DLIST *dl)
   if (dl) {
 	
 	if (dl->head == NULL &&
+		dl->tail == NULL &&
+		dl->cur == NULL &&
 		dl->len == 0)
 	  return (1);
   }
@@ -49,21 +52,21 @@ dl_empty(DLIST *dl)
 int
 dl_append(const char *s, DLIST *dl)
 {
-  dl_node *np;
+  dl_node *new;
   
   if (dl) {
 	
-	np = dl_mknode(s);
+	new = dl_mknode(s);
 
 	if (dl_empty(dl)) {
-	  dl->head = np;
+	  dl->head = new;
 	} else {
-	  dl->tail->next = np;
-	  np->pre = dl->tail;
+	  dl->tail->next = new;
+	  new->pre = dl->tail;
 	}
 	
-	dl->cur = np;
-	dl->tail = np;
+	dl->cur = new;
+	dl->tail = new;
 	dl->len++;
 	return (1);
   }
@@ -71,13 +74,24 @@ dl_append(const char *s, DLIST *dl)
   return (0);
 }
 
+/*
 static void
-_dl_ins(dl_node *np, dl_node *new)
+_dl_ins_after(dl_node *np, dl_node *new)
 {
   new->pre = np;
   new->next = np->next;
-  np->next = new;
   np->next->pre = new;
+  np->next = new;
+}
+*/
+
+static void
+_dl_ins_before(dl_node *np, dl_node *new)
+{
+  new->next = np;
+  new->pre = np->pre;
+  np->pre->next = new;
+  np->pre = new;
 }
 
 int
@@ -100,26 +114,30 @@ dl_ins_at_pos(const char *s, int pos, DLIST *dl)
 
 	if (pos <= 0) {
 
-	  _dl_ins(dl->head, new);
+	  new->next = dl->head;
+	  dl->head->pre = new;
+	  dl->head = new;
 	  dl->len++;
 	  return (1);
 	}
 
-	if (pos > 0 && pos <= dl->len) {
+	if (pos > 0 && pos < dl->len) {
 
 	  np = dl->head;
 
 	  for (i = 0; i < pos; i++)
 		np = np->next;
 
-	  _dl_ins(np, new);
+	  _dl_ins_before(np, new);
 	  dl->len++;
 	  return (1);  
 	}
 
-	if (pos > dl->len) {
-
-	  _dl_ins(dl->tail, new);
+	if (pos >= dl->len) {
+	  
+	  new->pre = dl->tail->pre;
+	  dl->tail->next = new;
+	  dl->tail = new;
 	  dl->len++;
 	  return (1);
 	}
@@ -145,24 +163,33 @@ dl_ins_at_val(const char *s, const char *t, DLIST *dl)
 	}
 	
 	np = dl->head;
-	while (np && (0 != strncmp(t, np->node, strlen(t) + 1)))
-	  np = np->next;
+	while (np) {
+
+	  if (0 == strncmp(t, np->node, strlen(t) + 1)) {
 	
-	if (np == dl->head) {
-	  dl_ins_at_pos(s, 0, dl);
-	  return (1);
+		if (np == dl->head) {
+		  new->next = dl->head;
+		  dl->head->pre = new;
+		  dl->head = new;
+		  dl->len++;
+		  return (1);
+		}
+
+		_dl_ins_before(np, new);
+		dl->len++;
+		return (1);
+	  }
+	  	 
+	  np = np->next;
 	}
 
-	if (np == dl->tail) {
-	  dl_append(s, dl);
-	  return (1);
-	}
-
-	_dl_ins(np, new);
+	new->pre = dl->tail->pre;
+	dl->tail->next = new;
+	dl->tail = new;
 	dl->len++;
 	return (1);
   }
-
+  
   return (0);
 }
 
