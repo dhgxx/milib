@@ -26,7 +26,7 @@ DLIST *dl_init(void);
 int dl_empty(DLIST *);
 int dl_append(const char *, DLIST *);
 int dl_ins_at_pos(const char *, int, DLIST *);
-int dl_ins_at_val(const char *, const char *, DLIST *, int);
+int dl_ins_at_val(const char *, const char *, DLIST *);
 int dl_delete(const char *, DLIST *);
 void dl_proc(DLIST *, void (*) (const char *));
 void dl_free(DLIST *);
