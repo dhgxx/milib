@@ -195,19 +195,17 @@ dl_ins_at_val(const char *s, const char *t, DLIST *dl)
 
 int
 dl_delete(const char *s, DLIST *dl)
-{
-  dl_node *np;
-  
+{  
   if (s && !dl_empty(dl)) {
 	
-	np = dl->head;
-	while (np) {
-	  if (0 == strncmp(s, np->node, strlen(s) + 1)) {
-		np->deleted = 1;
+	dl->cur = dl->head;
+	while (dl->cur) {
+	  if (0 == strncmp(s, dl->cur->node, strlen(s) + 1)) {
+		dl->cur->deleted = 1;
 		dl->len--;
 		return (1);
 	  }
-	  np = np->next;
+	  dl->cur = dl->cur->next;
 	}
   }
 
@@ -217,16 +215,13 @@ dl_delete(const char *s, DLIST *dl)
 void
 dl_proc(DLIST *dl, void (*func_p) (const char *s))
 {
-  dl_node *np;
-  
   if (dl && func_p) {
 	if (!dl_empty(dl)) {
-	  np = dl->head;
-	  while (np) {
-		if (!np->deleted)
-		  func_p(np->node);
-		dl->cur = np;
-		np = np->next;
+	  dl->cur = dl->head;
+	  while (dl->cur) {
+		if (!dl->cur->deleted)
+		  func_p(dl->cur->node);
+		dl->cur = dl->cur->next;
 	  }
 	}
   }
@@ -238,11 +233,14 @@ dl_free(DLIST *dl)
   dl_node *np;
   
   if (!dl) {
-	dl->cur = np = dl->tail;
-	while (dl->cur) {
-	  dl->cur = dl->cur->pre;
+	
+	np = dl->tail;
+	dl->cur = dl->tail->pre;
+	while (np) {
 	  free(np);
 	  np = NULL;
+	  np = dl->cur;
+	  dl->cur = dl->cur->pre;
 	}
   }
 }
