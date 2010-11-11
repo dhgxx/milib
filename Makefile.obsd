@@ -1,0 +1,32 @@
+# OpenBSD makefile for milib.
+
+LIB=	mi
+
+HDRS=	${.CURDIR}/{btree/bstree.h,list/dlist.h,stack/stack.h}
+SRCS=	bstree.c dlist.c stack.c
+
+SHLIB_MAJOR=	1
+SHLIB_MINOR=	0
+
+.PATH:	${.CURDIR}/btree ${.CURDIR}/list ${.CURDIR}/stack
+LIBDIR=	/opt/local/lib
+INCSDIR=	/opt/local/include
+
+WARNS?=	2
+NO_OBJ=true
+NOBINMODE=0444
+
+.if !defined(NOOBJ)
+NOOBJ=${NO_OBJ}
+.endif
+
+includes:
+	@cd ${.CURDIR}; for i in $(HDRS); do \
+		j="cmp -s $$i ${INCSDIR}/$$i || \
+			${INSTALL} ${INSTALL_COPY} -o ${BINOWN} -g ${BINGRP} -m ${NOBINMODE} \
+			$$i ${INCSDIR}"; \
+		echo $$j; \
+		eval "$$j"; \
+	done
+
+.include <bsd.lib.mk>
