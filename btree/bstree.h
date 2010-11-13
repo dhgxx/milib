@@ -17,11 +17,13 @@ typedef struct _bst_node {
   char node[BST_ENT_SIZE];
   struct _bst_node *left;
   struct _bst_node *right;
+  unsigned int depth;
   unsigned int deleted;
 } bst_node;
 
 typedef struct _bstree {
   bst_node *root;
+  unsigned int size;
 } BSTREE;
 
 bst_node *bst_mknode(const char *);
@@ -32,6 +34,6 @@ void bst_ins(const char *, BSTREE *, int);
 int bst_del(const char *, BSTREE *);
 
 void bst_free(BSTREE *);
-void bst_proc(BSTREE *, BST_TRV_ORDER, void (*) (const char *));
+void bst_proc(BSTREE *, BST_TRV_ORDER, void (*) (const bst_node *));
 
 #endif /* _BSTREE_H_ */

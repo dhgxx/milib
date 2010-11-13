@@ -6,6 +6,7 @@ st_init(void)
   STACK *st;
   
   if ((st = malloc(sizeof(STACK)))) {
+	st->top = NULL;
 	st->size = 0;
   }
 
@@ -15,8 +16,11 @@ st_init(void)
 int
 st_empty(STACK *st)
 {
-  if (st)
-	return (st->top == NULL) ? 1 : 0;
+  if (st) {
+	if (st->top == NULL &&
+		st->size == 0)
+	  return (1);
+  }
   
   return (0);
 }
