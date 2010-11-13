@@ -37,7 +37,10 @@ bst_init(void)
 int
 bst_empty(BSTREE *tp)
 {
-  return (tp->root == NULL ? 1 : 0);
+  if (tp)
+	return ((tp->root == NULL) ? 1 : 0);
+
+  return (0);
 }
 
 bst_node *
@@ -149,7 +152,8 @@ bst_del(const char *str, BSTREE *tp)
 void
 bst_free(BSTREE *tp)
 {
-  _bst_free(tp->root);
+  if (tp)
+	_bst_free(tp->root);
 }
 
 static void
