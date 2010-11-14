@@ -14,9 +14,10 @@ dl_mknode(const char *str)
 	np->deleted = 0;
 	np->pre = NULL;
 	np->next = NULL;
+	return (np);
   }
 
-  return (np);
+  return (NULL);
 }
 
 DLIST *
@@ -29,23 +30,24 @@ dl_init(void)
 	dl->tail = NULL;
 	dl->cur = NULL;
 	dl->len = 0;
+	return (dl);
   }
 
-  return (dl);
+  return (NULL);
 }
 
 int
-dl_empty(DLIST *dl)
+dl_empty(const DLIST *dl)
 {
-  if (dl) {
-	
-	if (dl->head == NULL &&
-		dl->tail == NULL &&
-		dl->cur == NULL &&
-		dl->len == 0)
+  if (dl) {	
+	if (dl->head == NULL
+		&& dl->tail == NULL
+		&& dl->cur == NULL
+		&& dl->len == 0) {
 	  return (1);
+	}
   }
-
+  
   return (0);
 }
 
@@ -89,8 +91,10 @@ static void
 _dl_ins_before(dl_node *np, dl_node *new)
 {
   new->next = np;
-  new->pre = np->pre;
-  np->pre->next = new;
+  if (np->pre) {	
+	new->pre = np->pre;
+	np->pre->next = new;
+  }
   np->pre = new;
 }
 
@@ -153,32 +157,37 @@ dl_ins_at_val(const char *str, const char *pos, DLIST *dl)
   
   if (str && pos && dl) {
 
-	new = dl_mknode(str);
+	dl->cur = new = dl_mknode(str);
 	
 	if (dl_empty(dl)) {
 	  
-	  dl->cur = dl->head = dl->tail = new;
+	  dl->head = dl->tail = new;
 	  dl->len++;
-	} else {
+	  return (1);
+	}
 
-	  dl->cur = new;
-	  np = dl->head;
-	  
-	  while (np) {
-
-		if (0 == strncmp(pos, np->node, strlen(pos) + 1)) {
+	np = dl->head;
 	
-		  _dl_ins_before(np, new);
-		  dl->len++;
-		}
-	  	 
-		np = np->next;
+	while (np) {
+	  
+	  if (0 == strncmp(pos, np->node, strlen(pos) + 1)) {
+		_dl_ins_before(np, new);
+
+		if (np == dl->head)
+		  dl->head = new;
+		if (np == dl->tail)
+		  dl->tail = new;
+		
+		dl->len++;
+		break;
 	  }
+	  
+	  np = np->next;
 	}
 
 	return (1);
   }
-  
+
   return (0);
 }
 
@@ -202,14 +211,14 @@ dl_delete(const char *str, DLIST *dl)
 }
 
 void
-dl_proc(DLIST *dl, void (*func_p) (const char *str))
+dl_proc(DLIST *dl, void (*func_p) (const dl_node *np))
 {
   if (dl && func_p) {
 	if (!dl_empty(dl)) {
 	  dl->cur = dl->head;
 	  while (dl->cur) {
 		if (!dl->cur->deleted)
-		  func_p(dl->cur->node);
+		  func_p(dl->cur);
 		dl->cur = dl->cur->next;
 	  }
 	}
