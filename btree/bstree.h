@@ -17,7 +17,6 @@ typedef struct _bst_node {
   char node[BST_ENT_SIZE];
   struct _bst_node *left;
   struct _bst_node *right;
-  unsigned int depth;
   unsigned int deleted;
 } bst_node;
 
