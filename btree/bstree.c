@@ -1,7 +1,7 @@
 #include "bstree.h"
 
 static bst_node *_bst_loc(const char *, bst_node *);
-static void _bst_ins(const char *, bst_node *, int, int);
+static void _bst_ins(const char *, bst_node *, int);
 static void _bst_proc(bst_node *, BST_TRV_ORDER, void (*) (const bst_node *));
 static void _bst_free(bst_node *);
 
@@ -16,7 +16,6 @@ bst_mknode(const char *str)
 	strlcpy(np->node, str, strlen(str) + 1);
 	np->left = NULL;
 	np->right = NULL;
-	np->depth = 0;
 	np->deleted = 0;
 	return (np);
   } else {
@@ -97,14 +96,13 @@ void
 bst_ins(const char *str, BSTREE *tp, int ic)
 {
   if (!bst_empty(tp)) {
+	_bst_ins(str, tp->root, ic);
 	tp->size++;
-	_bst_ins(str, tp->root, ((int)(tp->size / 2) + 1), ic);
 	return;
   }
 
   if (tp) {
 	if ((tp->root = bst_mknode(str))) {
-	  tp->root->depth = 1;
 	  tp->size++;
 	  return;
 	}
@@ -112,7 +110,7 @@ bst_ins(const char *str, BSTREE *tp, int ic)
 }
 
 static void
-_bst_ins(const char *str, bst_node *pos, int depth, int ic)
+_bst_ins(const char *str, bst_node *pos, int ic)
 {
   int m;
   bst_node *np;
@@ -125,32 +123,26 @@ _bst_ins(const char *str, bst_node *pos, int depth, int ic)
 
 	if (ic == 1 && m == 0) {
 	  
-	  if (!np->left) {
-		
+	  if (!np->left)		
 		np->left = bst_mknode(str);
-		np->left->depth = depth;
-	  } else {
-		_bst_ins(str, np->left, depth, ic);
-	  }
+	  else
+		_bst_ins(str, np->left, ic);
 	}
 
 	if (0 > m) {
 	  
-	  if (!np->left) {
+	  if (!np->left)
 		np->left = bst_mknode(str);
-		np->left->depth = depth;
-	  } else {
-		_bst_ins(str, np->left, depth, ic);
-	  }
+	  else
+		_bst_ins(str, np->left, ic);
 	}
 	
 	if (0 < m) {
-	  if (!np->right) {
+	  
+	  if (!np->right)
 		np->right = bst_mknode(str);
-		np->right->depth = depth;
-	  } else {
-		_bst_ins(str, np->right, depth, ic);
-	  }
+	  else
+		_bst_ins(str, np->right, ic);
 	}
   }
 }
