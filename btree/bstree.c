@@ -138,21 +138,21 @@ _bst_ins(const char *str, bst_node *pos, const int ic)
   m = strncmp(str, np->node, strlen(str) + 1);
 
   if (ic == 1 && m == 0) {	  
-	if (np->left != NULL)		
+	if (np->left == NULL)		
 	  np->left = bst_mknode(str);
 	else
 	  _bst_ins(str, np->left, ic);
   }
 
   if (0 > m) {	  
-	if (np->left != NULL)
+	if (np->left == NULL)
 	  np->left = bst_mknode(str);
 	else
 	  _bst_ins(str, np->left, ic);
   }
 	
   if (0 < m) {	  
-	if (np->right != NULL)
+	if (np->right == NULL)
 	  np->right = bst_mknode(str);
 	else
 	  _bst_ins(str, np->right, ic);
