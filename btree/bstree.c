@@ -207,8 +207,8 @@ _bst_free(bst_node *np)
 }
 
 void
-bst_proc(BSTREE *tp, BST_TRV_ORDER odr, void (*func_p) (const bst_node *np))
-{
+bst_proc(BSTREE *tp, BST_TRV_ORDER odr, void (*func_p) (const bst_node *node))
+{  
   if (tp == NULL)
 	return;
   if (func_p == NULL)
@@ -218,7 +218,7 @@ bst_proc(BSTREE *tp, BST_TRV_ORDER odr, void (*func_p) (const bst_node *np))
 }
 
 static void
-_bst_proc(bst_node *beg, BST_TRV_ORDER odr, void (*func_p) (const bst_node *np))
+_bst_proc(bst_node *beg, BST_TRV_ORDER odr, void (*func_p) (const bst_node *node))
 {
     bst_node *np;
 
