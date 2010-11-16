@@ -2,7 +2,7 @@
 
 static void _ins_after(dl_node *, dl_node *);
 static void _ins_before(dl_node *, dl_node *);
-static void _swap(dl_node *, dl_node *);
+static int _swap(dl_node *, dl_node *);
 
 dl_node *
 dl_mknode(const char *str)
@@ -98,14 +98,14 @@ _ins_before(dl_node *np, dl_node *new)
   np->pre = new;
 }
 
-static void
+static int
 _swap(dl_node *front, dl_node *rear)
 {
   dl_node *fp, *rn;
   
   if (front == NULL ||
 	  rear == NULL)
-	return;
+	return (1);
 
   /* simple: we have only two nodes */
   /* to deal with. */
@@ -115,7 +115,7 @@ _swap(dl_node *front, dl_node *rear)
 	front->pre = rear;
 	rear->pre = NULL;
 	rear->next = front;
-	return;
+	return (1);
   }
 
   /* we are at the head. */
@@ -128,7 +128,7 @@ _swap(dl_node *front, dl_node *rear)
 	rear->next = front;
 	rear->pre = NULL;
 	rn->pre = front;
-	return;
+	return (1);
   }
 
   /* we are at the tail. */
@@ -141,7 +141,7 @@ _swap(dl_node *front, dl_node *rear)
 	front->pre = rear;
 	rear->next = front;
 	rear->pre = fp;
-	return;
+	return (1);
   }
 
   /* hard: the two nodes to swap */
@@ -158,8 +158,9 @@ _swap(dl_node *front, dl_node *rear)
 	rear->next = front;
 	front->next = rn;
 	fp->next = rear;
-	return;
+	return (1);
   }
+  return (0);
 }
 
 int
@@ -255,7 +256,8 @@ dl_ins_at_val(const char *str, const char *pos, DLIST *dl, const int before)
 void
 dl_sort(DLIST *dl)
 {
-  int m;
+  int m, ret;
+  char *pre, *next;
   dl_node *front, *rear;
   
   if (dl == NULL)
@@ -270,19 +272,39 @@ dl_sort(DLIST *dl)
 
   rear = dl->tail;
   front = rear->pre;
+  dl->cur = front;
 
-  while (front != NULL) {
+  while (dl->cur != NULL) {
 
-	m = strncmp(front->node, rear->node, strlen(rear->node) + 1);
-	if (m > 0) {
-	  _swap(front, rear);
-	  if (rear == dl->tail)
+	pre = front->node;
+	next = rear->node;
+
+	if (pre != NULL && next != NULL)
+	  m = strncmp(pre, next, strlen(next) + 1);
+	else
+	  m = -1;
+
+	if (m > 0)
+	  ret = _swap(front, rear);
+	else
+	  ret = 0;
+
+	if (ret == 1) {
+#ifdef _DEBUG_
+	  fprintf(stderr, "swaping %s and %s\n", pre, next);
+#endif
+	  if (dl->tail == rear)
 		dl->tail = front;
-	  if (front == dl->head)
+	  if (dl->head == front)
 		dl->head = rear;
+	  front = dl->cur;
+	  rear = front->next;
+	} else {
+	  front = dl->cur->pre;
+	  rear = dl->cur;
 	}
-	rear = front;
-	front = front->pre;
+
+	dl->cur = front;
   }
 }
 
