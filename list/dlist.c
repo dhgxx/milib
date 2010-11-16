@@ -1,7 +1,8 @@
 #include "dlist.h"
 
-static void _dl_ins_after(dl_node *, dl_node *);
-static void _dl_ins_before(dl_node *, dl_node *);
+static void _ins_after(dl_node *, dl_node *);
+static void _ins_before(dl_node *, dl_node *);
+static void _swap(dl_node *, dl_node *);
 
 dl_node *
 dl_mknode(const char *str)
@@ -77,7 +78,7 @@ dl_append(const char *str, DLIST *dl)
 }
 
 static void
-_dl_ins_after(dl_node *np, dl_node *new)
+_ins_after(dl_node *np, dl_node *new)
 {
   new->pre = np;
   new->next = np->next;
@@ -87,7 +88,7 @@ _dl_ins_after(dl_node *np, dl_node *new)
 }
 
 static void
-_dl_ins_before(dl_node *np, dl_node *new)
+_ins_before(dl_node *np, dl_node *new)
 {
   new->next = np;
   if (np->pre != NULL) {	
@@ -95,6 +96,70 @@ _dl_ins_before(dl_node *np, dl_node *new)
 	np->pre->next = new;
   }
   np->pre = new;
+}
+
+static void
+_swap(dl_node *front, dl_node *rear)
+{
+  dl_node *fp, *rn;
+  
+  if (front == NULL ||
+	  rear == NULL)
+	return;
+
+  /* simple: we have only two nodes */
+  /* to deal with. */
+  if (front->pre == NULL &&
+	  rear->next == NULL) {
+	front->next = NULL;
+	front->pre = rear;
+	rear->pre = NULL;
+	rear->next = front;
+	return;
+  }
+
+  /* we are at the head. */
+  if (front->pre == NULL &&
+	  rear->next != NULL) {
+	rn = rear->next;
+
+	front->next = rn;
+	front->pre = rear;
+	rear->next = front;
+	rear->pre = NULL;
+	rn->pre = front;
+	return;
+  }
+
+  /* we are at the tail. */
+  if (front->pre != NULL &&
+	  rear->next == NULL) {
+	fp = front->pre;
+
+	fp->next = rear;
+	front->next = NULL;
+	front->pre = rear;
+	rear->next = front;
+	rear->pre = fp;
+	return;
+  }
+
+  /* hard: the two nodes to swap */
+  /* have neighbors. */
+  if (front->pre != NULL &&
+	  rear->next != NULL) {
+	fp = front->pre;
+	rn = rear->next;
+
+	rear->pre = fp;
+	front->pre = rear;
+	rn->pre = front;
+
+	rear->next = front;
+	front->next = rn;
+	fp->next = rear;
+	return;
+  }
 }
 
 int
@@ -129,9 +194,9 @@ dl_ins_at_pos(const char *str, int pos, DLIST *dl, const int before)
 		np = np->next;
 
 	  if (before == 1)
-		_dl_ins_before(np, new);
+		_ins_before(np, new);
 	  else
-		_dl_ins_after(np, new);
+		_ins_after(np, new);
 	  
 	  dl->len++;
 	}
@@ -169,11 +234,11 @@ dl_ins_at_val(const char *str, const char *pos, DLIST *dl, const int before)
 	while (np) {
 	  if (0 == strncmp(pos, np->node, strlen(pos) + 1)) {
 		if (before == 1) {
-		  _dl_ins_before(np, new);
+		  _ins_before(np, new);
 		  if (np == dl->head)
 			dl->head = new;
 		} else {
-		  _dl_ins_after(np, new);
+		  _ins_after(np, new);
 		  if (np == dl->tail)
 			dl->tail = new;
 		}
@@ -185,6 +250,40 @@ dl_ins_at_val(const char *str, const char *pos, DLIST *dl, const int before)
 	}
   }
   return (1);
+}
+
+void
+dl_sort(DLIST *dl)
+{
+  int m;
+  dl_node *front, *rear;
+  
+  if (dl == NULL)
+	return;
+
+  if (dl_empty(dl))
+	return;
+
+  if (dl->tail == dl->head &&
+	  dl->len == 1)
+	return;
+
+  rear = dl->tail;
+  front = rear->pre;
+
+  while (front != NULL) {
+
+	m = strncmp(front->node, rear->node, strlen(rear->node) + 1);
+	if (m > 0) {
+	  _swap(front, rear);
+	  if (rear == dl->tail)
+		dl->tail = front;
+	  if (front == dl->head)
+		dl->head = rear;
+	}
+	rear = front;
+	front = front->pre;
+  }
 }
 
 int
