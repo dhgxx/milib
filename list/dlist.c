@@ -80,10 +80,9 @@ static void
 _dl_ins_after(dl_node *np, dl_node *new)
 {
   new->pre = np;
-  if (np->next != NULL) {
-	new->next = np->next;
+  new->next = np->next;
+  if (np->next != NULL)
 	np->next->pre = new;
-  }
   np->next = new;
 }
 
@@ -169,15 +168,15 @@ dl_ins_at_val(const char *str, const char *pos, DLIST *dl, const int before)
 	np = dl->head;
 	while (np) {
 	  if (0 == strncmp(pos, np->node, strlen(pos) + 1)) {
-		if (before == 1)
+		if (before == 1) {
 		  _dl_ins_before(np, new);
-		else
+		  if (np == dl->head)
+			dl->head = new;
+		} else {
 		  _dl_ins_after(np, new);
-		
-		if (np == dl->head)
-		  dl->head = new;
-		if (np == dl->tail)
-		  dl->tail = new;
+		  if (np == dl->tail)
+			dl->tail = new;
+		}
 		
 		dl->len++;
 		break;
@@ -239,13 +238,17 @@ dl_free(DLIST *dl)
   if (dl == NULL)
 	return;
 
+  if (dl_empty(dl))
+	return;
+	  
   np = dl->tail;
   dl->cur = dl->tail->pre;
   
-  while (np) {
+  while (np != NULL) {
 	free(np);
 	np = NULL;
 	np = dl->cur;
-	dl->cur = dl->cur->pre;
+	if (dl->cur != NULL)
+	  dl->cur = dl->cur->pre;
   }
 }
