@@ -1,8 +1,8 @@
 #include "dlist.h"
 
-static void _ins_after(dl_node *, dl_node *);
-static void _ins_before(dl_node *, dl_node *);
-static int _swap(dl_node *, dl_node *);
+static void ins_after(dl_node *, dl_node *);
+static void ins_before(dl_node *, dl_node *);
+static int swap(dl_node *, dl_node *);
 
 dl_node *
 dl_mknode(const char *str)
@@ -78,7 +78,7 @@ dl_append(const char *str, DLIST *dl)
 }
 
 static void
-_ins_after(dl_node *np, dl_node *new)
+ins_after(dl_node *np, dl_node *new)
 {
   new->pre = np;
   new->next = np->next;
@@ -88,7 +88,7 @@ _ins_after(dl_node *np, dl_node *new)
 }
 
 static void
-_ins_before(dl_node *np, dl_node *new)
+ins_before(dl_node *np, dl_node *new)
 {
   new->next = np;
   if (np->pre != NULL) {	
@@ -99,7 +99,7 @@ _ins_before(dl_node *np, dl_node *new)
 }
 
 static int
-_swap(dl_node *front, dl_node *rear)
+swap(dl_node *front, dl_node *rear)
 {
   dl_node *fp, *rn;
   
@@ -195,9 +195,9 @@ dl_ins_at_pos(const char *str, int pos, DLIST *dl, const int before)
 		np = np->next;
 
 	  if (before == 1)
-		_ins_before(np, new);
+		ins_before(np, new);
 	  else
-		_ins_after(np, new);
+		ins_after(np, new);
 	  
 	  dl->len++;
 	}
@@ -235,11 +235,11 @@ dl_ins_at_val(const char *str, const char *pos, DLIST *dl, const int before)
 	while (np) {
 	  if (0 == strncmp(pos, np->node, strlen(pos) + 1)) {
 		if (before == 1) {
-		  _ins_before(np, new);
+		  ins_before(np, new);
 		  if (np == dl->head)
 			dl->head = new;
 		} else {
-		  _ins_after(np, new);
+		  ins_after(np, new);
 		  if (np == dl->tail)
 			dl->tail = new;
 		}
@@ -285,7 +285,7 @@ dl_sort(DLIST *dl)
 	  m = -1;
 
 	if (m > 0)
-	  ret = _swap(front, rear);
+	  ret = swap(front, rear);
 	else
 	  ret = 0;
 

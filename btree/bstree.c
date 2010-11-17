@@ -1,9 +1,9 @@
 #include "bstree.h"
 
-static bst_node *_bst_loc(const char *, bst_node *);
-static void _bst_ins(const char *, bst_node *, int);
-static void _bst_proc(bst_node *, BST_TRV_ORDER, void (*) (const bst_node *));
-static void _bst_free(bst_node *);
+static bst_node *locate(const char *, bst_node *);
+static void insert(const char *, bst_node *, int);
+static void process(bst_node *, BST_TRV_ORDER, void (*) (const bst_node *));
+static void freenode(bst_node *);
 
 bst_node *
 bst_mknode(const char *str)
@@ -59,11 +59,11 @@ bst_find(const char *str, BSTREE *tp)
   if (bst_empty(tp))
 	return (NULL);
   
-  return (_bst_loc(str, tp->root));
+  return (locate(str, tp->root));
 }
 
 static bst_node *
-_bst_loc(const char *str, bst_node *n)
+locate(const char *str, bst_node *n)
 {
   int m;
   bst_node *cur, *np;
@@ -83,14 +83,14 @@ _bst_loc(const char *str, bst_node *n)
 	
 	if (0 > m) {
 	  if (np->left != NULL)
-		cur = np = _bst_loc(str, np->left);
+		cur = np = locate(str, np->left);
 	  else
 		return (np);
 	}
 	  
 	if (0 < m) {
 	  if (np->right != NULL)
-		cur = np = _bst_loc(str, np->right);
+		cur = np = locate(str, np->right);
 	  else
 		return (np);
 	}
@@ -118,13 +118,13 @@ bst_ins(const char *str, BSTREE *tp, const int ic)
 	return (1);
   }
   
-  _bst_ins(str, tp->root, ic);
+  insert(str, tp->root, ic);
   tp->size++;
   return (1);
 }
 
 static void
-_bst_ins(const char *str, bst_node *pos, const int ic)
+insert(const char *str, bst_node *pos, const int ic)
 {
   int m;
   bst_node *np;
@@ -134,28 +134,28 @@ _bst_ins(const char *str, bst_node *pos, const int ic)
   if (pos == NULL)
 	return;
   
-  np = _bst_loc(str, pos);
+  np = locate(str, pos);
   m = strncmp(str, np->node, strlen(str) + 1);
 
   if (ic == 1 && m == 0) {	  
 	if (np->left == NULL)		
 	  np->left = bst_mknode(str);
 	else
-	  _bst_ins(str, np->left, ic);
+	  insert(str, np->left, ic);
   }
 
   if (0 > m) {	  
 	if (np->left == NULL)
 	  np->left = bst_mknode(str);
 	else
-	  _bst_ins(str, np->left, ic);
+	  insert(str, np->left, ic);
   }
 	
   if (0 < m) {	  
 	if (np->right == NULL)
 	  np->right = bst_mknode(str);
 	else
-	  _bst_ins(str, np->right, ic);
+	  insert(str, np->right, ic);
   }
 }
 
@@ -169,7 +169,7 @@ bst_del(const char *str, BSTREE *tp)
   if (tp == NULL)
 	return (0);
   
-  np = _bst_loc(str, tp->root);
+  np = locate(str, tp->root);
 
   if (np != NULL) {
 	np->deleted = 1;
@@ -186,21 +186,21 @@ bst_free(BSTREE *tp)
   if (tp == NULL)
 	return;
   
-  _bst_free(tp->root);
+  freenode(tp->root);
   free(tp);
   tp = NULL;
 }
 
 static void
-_bst_free(bst_node *np)
+freenode(bst_node *np)
 {
   if (np == NULL)
 	return;
   
   if (np->left != NULL)
-	_bst_free(np->left);
+	freenode(np->left);
   if (np->right != NULL)
-	_bst_free(np->right);
+	freenode(np->right);
 
   free(np);
   np = NULL;
@@ -214,11 +214,11 @@ bst_proc(BSTREE *tp, BST_TRV_ORDER odr, void (*func_p) (const bst_node *node))
   if (func_p == NULL)
 	return;
   
-  _bst_proc(tp->root, odr, func_p);
+  process(tp->root, odr, func_p);
 }
 
 static void
-_bst_proc(bst_node *beg, BST_TRV_ORDER odr, void (*func_p) (const bst_node *node))
+process(bst_node *beg, BST_TRV_ORDER odr, void (*func_p) (const bst_node *node))
 {
     bst_node *np;
 
@@ -234,24 +234,24 @@ _bst_proc(bst_node *beg, BST_TRV_ORDER odr, void (*func_p) (const bst_node *node
 	  if (np->deleted != 1)
 		func_p(np);
 	  if (np->left != NULL)
-		_bst_proc(np->left, BST_PREORDER, func_p);
+		process(np->left, BST_PREORDER, func_p);
 	  if (np->right != NULL)
-		_bst_proc(np->right, BST_PREORDER, func_p);
+		process(np->right, BST_PREORDER, func_p);
 	  break;
 	case BST_INORDER:
 	  if (np->left != NULL)
-		_bst_proc(np->left, BST_INORDER, func_p);
+		process(np->left, BST_INORDER, func_p);
 	  if (np->deleted != 1)
 		func_p(np);
 	  if (np->right != NULL)
-		_bst_proc(np->right, BST_INORDER, func_p);
+		process(np->right, BST_INORDER, func_p);
 	  break;
 	default:
 	case BST_POSTORDER:
 	  if (np->left != NULL)
-		_bst_proc(np->left, BST_POSTORDER, func_p);
+		process(np->left, BST_POSTORDER, func_p);
 	  if (np->right != NULL)
-		_bst_proc(np->right, BST_POSTORDER, func_p);
+		process(np->right, BST_POSTORDER, func_p);
 	  if (np->deleted != 1)
 		func_p(np);
 	  break;
