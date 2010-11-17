@@ -100,6 +100,11 @@ st_free(STACK *st)
 	free(str);
 	str = NULL;
   }
+
+  if (st != NULL) {
+	free(st);
+	st = NULL;
+  }
 }
 
 void

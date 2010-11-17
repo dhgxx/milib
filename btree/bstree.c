@@ -187,8 +187,10 @@ bst_free(BSTREE *tp)
 	return;
   
   freenode(tp->root);
-  free(tp);
-  tp = NULL;
+  if (tp != NULL) {
+	free(tp);
+	tp = NULL;
+  }
 }
 
 static void
