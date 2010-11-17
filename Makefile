@@ -4,11 +4,13 @@ OSNAME=		${OSTYPE}
 OSNAME!=	uname -s
 .endif
 
+LIBCONFIG=	lib-config
+
 .if ${OSNAME} == "FreeBSD"
-MKFILE=		Makefile.fbsd
+MKFILE=		freebsd.mk
 INST=		install
 .elif ${OSNAME} == "OpenBSD"
-MKFILE=		Makefile.obsd
+MKFILE=		openbsd.mk
 INST=		install includes
 .endif
 
@@ -20,4 +22,5 @@ clean:
 
 install:
 	@${MAKE} -f ${MKFILE} ${INST}
+	@${MAKE} -f ${MKFILE} ${LIBCONFIG}
 
