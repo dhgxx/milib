@@ -359,8 +359,11 @@ dl_free(DLIST *dl)
   if (dl == NULL)
 	return;
 
-  if (dl_empty(dl))
+  if (dl_empty(dl)) {
+	free(dl);
+	dl = NULL;
 	return;
+  }
 	  
   np = dl->tail;
   dl->cur = dl->tail->pre;
@@ -371,5 +374,10 @@ dl_free(DLIST *dl)
 	np = dl->cur;
 	if (dl->cur != NULL)
 	  dl->cur = dl->cur->pre;
+  }
+
+  if (dl != NULL) {
+	free(dl);
+	dl = NULL;
   }
 }
