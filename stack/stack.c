@@ -7,7 +7,7 @@ st_init(void)
   
   if ((st = malloc(sizeof(STACK))) == NULL)
 	return (NULL);
-  
+
   st->top = NULL;
   st->size = 0;
   return (st);
@@ -36,9 +36,9 @@ st_mknode(const char *str)
 
   if ((np = malloc(sizeof(st_node))) == NULL)
 	return (NULL);
-  
+
   bzero(np->entry, ST_ENT_SIZE);
-  strlcpy(np->entry, str, strlen(str) + 1);
+  strncpy(np->entry, str, ST_ENT_SIZE);
   np->next = NULL;
   return (np);
 }
@@ -54,52 +54,55 @@ st_push(const char *str, STACK *st)
 	return (0);
     
   np = st_mknode(str);
-  np->next = st->top;
-  st->top = np;
-  st->size++;
-  return (1);
+
+  if (np != NULL) {
+	np->next = st->top;
+	st->top = np;
+	st->size++;
+	return (1);
+  }
+
+  return (0);
 }
 
-char *
+st_node *
 st_pop(STACK *st)
 {
-  char *str;
   st_node *np;
 
   if (st == NULL)
 	return (NULL);
   if (st_empty(st))
 	return (NULL);
-  if ((str = malloc(sizeof(ST_ENT_SIZE))) == NULL)
-	return (NULL);
-  
+
   np = st->top;
   st->top = np->next;
-  bzero(str, ST_ENT_SIZE);
-  strlcpy(str, np->entry, strlen(np->entry) + 1);
   np->next = NULL;
   st->size--;
-  free(np);
-  return (str);
+  return (np);
 }
 
 void
 st_free(STACK *st)
 {
-  char *str;
+  st_node *np;
 
   if (st == NULL)
 	return;
-  
-  while (!st_empty(st)) {
-	str = st_pop(st);
-	
-	if (str == NULL)
-	  return;
-	
-	free(str);
-	str = NULL;
+
+  if (st_empty(st)) {
+	free(st);
+	st = NULL;
+	return;
   }
+
+  do {
+	np = st_pop(st);
+	if (np != NULL) {
+	  free(np);
+	  np = NULL;
+	}
+  } while (st_empty(st) != 1);
 
   if (st != NULL) {
 	free(st);
@@ -108,7 +111,7 @@ st_free(STACK *st)
 }
 
 void
-st_proc(STACK *st, void (*func_p) (const char *str))  
+st_proc(STACK *st, void (*func_p) (const st_node *np))  
 {
   st_node *np;
 
@@ -122,7 +125,7 @@ st_proc(STACK *st, void (*func_p) (const char *str))
   np = st->top;
  
   while (np != NULL) {
-	func_p(np->entry);
+	func_p(np);
 	np = np->next;
   }
 }

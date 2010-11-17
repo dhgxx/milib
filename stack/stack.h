@@ -22,10 +22,10 @@ typedef struct _stack {
 
 STACK *st_init(void);
 int st_empty(STACK *);
-char *st_pop(STACK *);
+st_node *st_pop(STACK *);
 int st_push(const char *, STACK *);
 st_node *st_mknode(const char *);
-void st_proc(STACK *, void (*) (const char *));
+void st_proc(STACK *, void (*) (const st_node *));
 void st_free(STACK *);
 
 #endif /* _STACK_H_ */

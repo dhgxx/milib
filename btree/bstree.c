@@ -16,7 +16,7 @@ bst_mknode(const char *str)
 	return (NULL);
 
   bzero(np->node, BST_ENT_SIZE);
-  strlcpy(np->node, str, strlen(str) + 1);
+  strncpy(np->node, str, BST_ENT_SIZE);
   np->left = NULL;
   np->right = NULL;
   np->deleted = 0;
