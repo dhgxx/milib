@@ -12,7 +12,7 @@ bst_mknode(const char *str)
   
   if (str == NULL)
 	return (NULL);
-  if ((np = malloc(sizeof(bst_node))) == NULL)
+  if ((np = (bst_node *)malloc(sizeof(bst_node))) == NULL)
 	return (NULL);
 
   bzero(np->node, BST_ENT_SIZE);
@@ -28,7 +28,7 @@ bst_init(void)
 {
   BSTREE *tp;
 			  
-  if ((tp = malloc(sizeof(BSTREE))) == NULL)
+  if ((tp = (BSTREE *)malloc(sizeof(BSTREE))) == NULL)
 	return (NULL);
   
   tp->root = NULL;

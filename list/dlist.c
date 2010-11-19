@@ -12,7 +12,7 @@ dl_mknode(const char *str)
   if (str == NULL)
 	return (NULL);
   
-  if ((np = malloc(sizeof(dl_node))) == NULL)
+  if ((np = (dl_node *)malloc(sizeof(dl_node))) == NULL)
 	return (NULL);
   
   bzero(np->node, DL_ENT_SIZE);
@@ -28,7 +28,7 @@ dl_init(void)
 {
   DLIST *dl;
   
-  if ((dl = malloc(sizeof(DLIST))) == NULL)
+  if ((dl = (DLIST *)malloc(sizeof(DLIST))) == NULL)
 	return (NULL);
   
   dl->head = NULL;

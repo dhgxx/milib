@@ -5,7 +5,7 @@ st_init(void)
 {
   STACK *st;
   
-  if ((st = malloc(sizeof(STACK))) == NULL)
+  if ((st = (STACK *)malloc(sizeof(STACK))) == NULL)
 	return (NULL);
 
   st->top = NULL;
@@ -34,7 +34,7 @@ st_mknode(const char *str)
   if (str == NULL)
 	return (NULL);
 
-  if ((np = malloc(sizeof(st_node))) == NULL)
+  if ((np = (st_node *)malloc(sizeof(st_node))) == NULL)
 	return (NULL);
 
   bzero(np->entry, ST_ENT_SIZE);
