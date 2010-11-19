@@ -42,7 +42,7 @@ int
 dl_empty(const DLIST *dl)
 {
   if (dl == NULL)
-	return (0);
+	return (1);
 
   if ((dl->head == NULL) &&
 	  (dl->tail == NULL) &&
@@ -288,9 +288,9 @@ dl_sort(DLIST *dl)
 	if (m > 0)
 	  ret = swap(front, rear);
 	else
-	  ret = 0;
+	  ret = 1;
 
-	if (ret == 1) {
+	if (ret == 0) {
 #ifdef _DEBUG_
 	  fprintf(stderr, "swaping %s and %s\n", pre, next);
 #endif
