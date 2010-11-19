@@ -42,7 +42,7 @@ int
 dl_empty(const DLIST *dl)
 {
   if (dl == NULL)
-	return (1);
+	return (0);
 
   if ((dl->head == NULL) &&
 	  (dl->tail == NULL) &&
@@ -60,7 +60,7 @@ dl_append(const char *str, DLIST *dl)
   dl_node *new;
   
   if (dl == NULL)
-	return (0);
+	return (-1);
 
   new = dl_mknode(str);
 
@@ -74,7 +74,7 @@ dl_append(const char *str, DLIST *dl)
   dl->cur = new;
   dl->tail = new;
   dl->len++;
-  return (1);
+  return (0);
 }
 
 static void
@@ -105,7 +105,7 @@ swap(dl_node *front, dl_node *rear)
   
   if (front == NULL ||
 	  rear == NULL)
-	return (1);
+	return (-1);
 
   /* simple: we have only two nodes */
   /* to deal with. */
@@ -115,7 +115,7 @@ swap(dl_node *front, dl_node *rear)
 	front->pre = rear;
 	rear->pre = NULL;
 	rear->next = front;
-	return (1);
+	return (0);
   }
 
   /* we are at the head. */
@@ -128,7 +128,7 @@ swap(dl_node *front, dl_node *rear)
 	rear->next = front;
 	rear->pre = NULL;
 	rn->pre = front;
-	return (1);
+	return (0);
   }
 
   /* we are at the tail. */
@@ -141,7 +141,7 @@ swap(dl_node *front, dl_node *rear)
 	front->pre = rear;
 	rear->next = front;
 	rear->pre = fp;
-	return (1);
+	return (0);
   }
 
   /* hard: the two nodes to swap */
@@ -158,9 +158,10 @@ swap(dl_node *front, dl_node *rear)
 	rear->next = front;
 	front->next = rn;
 	fp->next = rear;
-	return (1);
+	return (0);
   }
-  return (0);
+  /* should never reach here! */
+  return (-1);
 }
 
 int
@@ -170,10 +171,10 @@ dl_ins_at_pos(const char *str, int pos, DLIST *dl, const int before)
   dl_node *new, *np;
   
   if (str == NULL)
-	return (0);
+	return (-1);
 
   if (dl == NULL)
-	return (0);
+	return (-1);
 	
   new = dl_mknode(str);
 	
@@ -210,7 +211,7 @@ dl_ins_at_pos(const char *str, int pos, DLIST *dl, const int before)
 	}
   }
 
-  return (1);
+  return (0);
 }
 
 int
@@ -220,10 +221,10 @@ dl_ins_at_val(const char *str, const char *pos, DLIST *dl, const int before)
   
   if ((str == NULL) ||
 	  (pos == NULL))
-	return (0);
+	return (-1);
 
   if (dl == NULL)
-	return (0);
+	return (-1);
 
   dl->cur = new = dl_mknode(str);
 	
@@ -250,7 +251,7 @@ dl_ins_at_val(const char *str, const char *pos, DLIST *dl, const int before)
 	  np = np->next;
 	}
   }
-  return (1);
+  return (0);
 }
 
 void
@@ -312,10 +313,10 @@ int
 dl_delete(const char *str, DLIST *dl)
 {  
   if (str == NULL)
-	return (0);
+	return (-1);
 
   if (dl == NULL)
-	return (0);
+	return (-1);
   
   if (!dl_empty(dl)) {
 	dl->cur = dl->head;
@@ -323,13 +324,13 @@ dl_delete(const char *str, DLIST *dl)
 	  if (0 == strncmp(str, dl->cur->node, strlen(str) + 1)) {
 		dl->cur->deleted = 1;
 		dl->len--;
-		return (1);
+		return (0);
 	  }
 	  dl->cur = dl->cur->next;
 	}
-	return (1);
+	return (0);
   }
-  return (0);
+  return (-1);
 }
 
 void

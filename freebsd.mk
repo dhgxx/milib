@@ -8,7 +8,7 @@ INCS=		bstree.h dlist.h stack.h
 SHLIB_MAJOR=	1
 SHLIB_MINOR=	0
 
-.PATH:		${.CURDIR}/btree ${.CURDIR}/list ${.CURDIR}/stack
+.PATH:		${.CURDIR}/tree ${.CURDIR}/list ${.CURDIR}/stack
 INCSDIR=	/opt/local/include
 LIBDIR=		/opt/local/lib
 

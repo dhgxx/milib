@@ -1,9 +1,9 @@
 #include "bstree.h"
 
 static bst_node *locate(const char *, bst_node *);
-static void insert(const char *, bst_node *, int);
+static int insert(const char *, bst_node *, int);
 static void process(bst_node *, BST_TRV_ORDER, void (*) (const bst_node *));
-static void freenode(bst_node *);
+static void mem_free(bst_node *);
 
 bst_node *
 bst_mknode(const char *str)
@@ -12,7 +12,7 @@ bst_mknode(const char *str)
   
   if (str == NULL)
 	return (NULL);
-  if ((np = (bst_node *)malloc(sizeof(bst_node))) == NULL)
+  if (NULL == (np = (bst_node *)malloc(sizeof(bst_node))))
 	return (NULL);
 
   bzero(np->node, BST_ENT_SIZE);
@@ -28,7 +28,7 @@ bst_init(void)
 {
   BSTREE *tp;
 			  
-  if ((tp = (BSTREE *)malloc(sizeof(BSTREE))) == NULL)
+  if (NULL == (tp = (BSTREE *)malloc(sizeof(BSTREE))))
 	return (NULL);
   
   tp->root = NULL;
@@ -105,58 +105,70 @@ int
 bst_ins(const char *str, BSTREE *tp, const int ic)
 {
   if (str == NULL)
-	return (0);
+	return (-1);
   if (tp == NULL)
-	return (0);
+	return (-1);
 
   if (bst_empty(tp)) {
 
 	if ((tp->root = bst_mknode(str)) == NULL)
-	  return (0);
+	  return (-1);
 	
 	tp->size++;
-	return (1);
+	return (0);
   }
   
-  insert(str, tp->root, ic);
-  tp->size++;
-  return (1);
+  if (0 == insert(str, tp->root, ic)) {
+	tp->size++;
+	return (0);
+  }
+
+  return (-1);
 }
 
-static void
+static int
 insert(const char *str, bst_node *pos, const int ic)
 {
-  int m;
+  int m, ret;
   bst_node *np;
 
   if (str == NULL)
-	return;
+	return (-1);
   if (pos == NULL)
-	return;
-  
+	return (-1);
+
+  ret = -1;
   np = locate(str, pos);
   m = strncmp(str, np->node, strlen(str) + 1);
 
-  if (ic == 1 && m == 0) {	  
-	if (np->left == NULL)		
-	  np->left = bst_mknode(str);
-	else
-	  insert(str, np->left, ic);
+  if (ic == 1 && m == 0) {
+	if (np->left == NULL) {
+	  if (NULL != (np->left = bst_mknode(str)))
+		ret = 0;
+	} else {
+	  ret = insert(str, np->left, ic);
+	}
   }
 
   if (0 > m) {	  
-	if (np->left == NULL)
-	  np->left = bst_mknode(str);
-	else
-	  insert(str, np->left, ic);
+	if (np->left == NULL) {
+	  if (NULL != (np->left = bst_mknode(str)))
+		ret = 0;
+	} else {
+	  ret = insert(str, np->left, ic);
+	}
   }
 	
   if (0 < m) {	  
-	if (np->right == NULL)
-	  np->right = bst_mknode(str);
-	else
-	  insert(str, np->right, ic);
+	if (np->right == NULL) {
+	  if (NULL != (np->right = bst_mknode(str)))
+		ret = 0;
+	} else {
+	  ret = insert(str, np->right, ic);
+	}
   }
+
+  return (ret);
 }
 
 int
@@ -165,19 +177,19 @@ bst_del(const char *str, BSTREE *tp)
   bst_node *np;
 
   if (str == NULL)
-	return (0);
+	return (-1);
   if (tp == NULL)
-	return (0);
+	return (-1);
   
   np = locate(str, tp->root);
 
   if (np != NULL) {
 	np->deleted = 1;
 	tp->size--;
-	return (1);
+	return (0);
   }
 
-  return (0);
+  return (-1);
 }
 
 void
@@ -186,7 +198,7 @@ bst_free(BSTREE *tp)
   if (tp == NULL)
 	return;
   
-  freenode(tp->root);
+  mem_free(tp->root);
   if (tp != NULL) {
 	free(tp);
 	tp = NULL;
@@ -194,15 +206,15 @@ bst_free(BSTREE *tp)
 }
 
 static void
-freenode(bst_node *np)
+mem_free(bst_node *np)
 {
   if (np == NULL)
 	return;
   
   if (np->left != NULL)
-	freenode(np->left);
+	mem_free(np->left);
   if (np->right != NULL)
-	freenode(np->right);
+	mem_free(np->right);
 
   free(np);
   np = NULL;

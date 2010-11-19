@@ -49,9 +49,9 @@ st_push(const char *str, STACK *st)
   st_node  *np;
   
   if (str == NULL)
-	return (0);
+	return (-1);
   if (st == NULL)
-	return (0);
+	return (-1);
     
   np = st_mknode(str);
 
@@ -59,10 +59,10 @@ st_push(const char *str, STACK *st)
 	np->next = st->top;
 	st->top = np;
 	st->size++;
-	return (1);
+	return (0);
   }
 
-  return (0);
+  return (-1);
 }
 
 st_node *

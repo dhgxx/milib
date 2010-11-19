@@ -2,13 +2,13 @@
 
 LIB=	  	mi
 
-HDRS=		${.CURDIR}/{btree/bstree.h,list/dlist.h,stack/stack.h}
+HDRS=		${.CURDIR}/{tree/bstree.h,list/dlist.h,stack/stack.h}
 SRCS=		bstree.c dlist.c stack.c
 
 SHLIB_MAJOR=	1
 SHLIB_MINOR=	0
 
-.PATH:		${.CURDIR}/btree ${.CURDIR}/list ${.CURDIR}/stack
+.PATH:		${.CURDIR}/tree ${.CURDIR}/list ${.CURDIR}/stack
 LIBDIR=		/opt/local/lib
 INCSDIR=	/opt/local/include
 
