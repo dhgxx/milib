@@ -32,7 +32,7 @@ bst_node *bst_find(const char *, BSTREE *);
 int bst_ins(const char *, BSTREE *, const int);
 int bst_del(const char *, BSTREE *);
 
-void bst_free(BSTREE *);
+void bst_free(BSTREE **);
 void bst_proc(BSTREE *, BST_TRV_ORDER, void (*) (const bst_node *));
 
 #endif /* _BSTREE_H_ */

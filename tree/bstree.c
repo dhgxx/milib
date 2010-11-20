@@ -3,7 +3,7 @@
 static bst_node *locate(const char *, bst_node *);
 static int insert(const char *, bst_node *, int);
 static void process(bst_node *, BST_TRV_ORDER, void (*) (const bst_node *));
-static void mem_free(bst_node *);
+static void mem_free(bst_node **);
 
 bst_node *
 bst_mknode(const char *str)
@@ -193,31 +193,37 @@ bst_del(const char *str, BSTREE *tp)
 }
 
 void
-bst_free(BSTREE *tp)
+bst_free(BSTREE **tp)
 {
-  if (tp == NULL)
+  BSTREE *p;
+
+  p = *tp;
+  if (p == NULL)
 	return;
   
-  mem_free(tp->root);
-  if (tp != NULL) {
-	free(tp);
-	tp = NULL;
+  mem_free(&(p->root));
+  if (p != NULL) {
+	free(p);
+	p = NULL;
   }
 }
 
 static void
-mem_free(bst_node *np)
+mem_free(bst_node **np)
 {
-  if (np == NULL)
+  bst_node *p;
+
+  p = *np;
+  if (p == NULL)
 	return;
   
-  if (np->left != NULL)
-	mem_free(np->left);
-  if (np->right != NULL)
-	mem_free(np->right);
+  if (p->left != NULL)
+	mem_free(&(p->left));
+  if (p->right != NULL)
+	mem_free(&(p->right));
 
-  free(np);
-  np = NULL;
+  free(p);
+  p = NULL;
 }
 
 void

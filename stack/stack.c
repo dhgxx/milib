@@ -83,30 +83,32 @@ st_pop(STACK *st)
 }
 
 void
-st_free(STACK *st)
+st_free(STACK **st)
 {
   st_node *np;
+  STACK *stp;
 
-  if (st == NULL)
+  stp = *st;
+  if (stp == NULL)
 	return;
 
-  if (st_empty(st)) {
-	free(st);
-	st = NULL;
+  if (st_empty(stp)) {
+	free(stp);
+	stp = NULL;
 	return;
   }
 
   do {
-	np = st_pop(st);
+	np = st_pop(stp);
 	if (np != NULL) {
 	  free(np);
 	  np = NULL;
 	}
-  } while (st_empty(st) != 1);
+  } while (st_empty(stp) != 1);
 
-  if (st != NULL) {
-	free(st);
-	st = NULL;
+  if (stp != NULL) {
+	free(stp);
+	stp = NULL;
   }
 }
 
