@@ -2,8 +2,8 @@
 
 LIB=		mi
 
-SRCS=		bstree.c dlist.c stack.c
-INCS=		bstree.h dlist.h stack.h
+SRCS=		bstree.c dlist.c stack.c tree.c
+INCS=		bstree.h dlist.h stack.h tree.h
 
 SHLIB_MAJOR=	1
 SHLIB_MINOR=	0
