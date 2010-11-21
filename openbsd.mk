@@ -2,8 +2,8 @@
 
 LIB=	  	mi
 
-HDRS=		${.CURDIR}/{tree/bstree.h,list/dlist.h,stack/stack.h}
-SRCS=		bstree.c dlist.c stack.c
+HDRS=		${.CURDIR}/{tree/bstree.h,tree/tree.h,list/dlist.h,stack/stack.h}
+SRCS=		bstree.c dlist.c stack.c tree.c
 
 SHLIB_MAJOR=	1
 SHLIB_MINOR=	0
