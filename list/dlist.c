@@ -334,7 +334,7 @@ dl_delete(const char *str, DLIST *dl)
 }
 
 void
-dl_proc(DLIST *dl, void (*func_p) (const dl_node *np))
+dl_foreach(DLIST *dl, void (*func_p) (const dl_node *np))
 {
   if (dl == NULL)
 	return;

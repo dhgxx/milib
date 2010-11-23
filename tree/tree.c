@@ -1,6 +1,6 @@
 #include "tree.h"
 
-static void process(tr_node *, void (*)(const tr_node *));
+static void foreach(tr_node *, void (*)(const tr_node *));
 static tr_node *locate(const char *, tr_node *);
 static void mem_free(tr_node **);
 
@@ -94,7 +94,7 @@ tr_find(const char *str, TREE *tp)
 }
 
 void
-tr_proc(TREE *tp, void (*func_p)(const tr_node *np))
+tr_foreach(TREE *tp, void (*func_p)(const tr_node *np))
 {  
   if (tp == NULL)
 	return;
@@ -103,11 +103,11 @@ tr_proc(TREE *tp, void (*func_p)(const tr_node *np))
   if (tr_empty(tp))
 	return;
 
-  process(tp->root, func_p);
+  foreach(tp->root, func_p);
 }
 
 static void
-process(tr_node *np, void (*func_p)(const tr_node *np))
+foreach(tr_node *np, void (*func_p)(const tr_node *np))
 {
   if (np == NULL)
 	return;
@@ -117,9 +117,9 @@ process(tr_node *np, void (*func_p)(const tr_node *np))
   func_p(np);
 
   if (np->sbl != NULL)
-	process(np->sbl, func_p);
+	foreach(np->sbl, func_p);
   if (np->cld != NULL)
-	process(np->cld, func_p);
+	foreach(np->cld, func_p);
 }
 
 static tr_node *

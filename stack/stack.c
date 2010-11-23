@@ -113,7 +113,7 @@ st_free(STACK **st)
 }
 
 void
-st_proc(STACK *st, void (*func_p) (const st_node *np))  
+st_foreach(STACK *st, void (*func_p) (const st_node *np))  
 {
   st_node *np;
 

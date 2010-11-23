@@ -2,7 +2,7 @@
 
 static bst_node *locate(const char *, bst_node *);
 static int insert(const char *, bst_node *, int);
-static void process(bst_node *, BST_TRV_ORDER, void (*) (const bst_node *));
+static void foreach(bst_node *, BST_TRV_ORDER, void (*) (const bst_node *));
 static void mem_free(bst_node **);
 
 bst_node *
@@ -227,18 +227,18 @@ mem_free(bst_node **np)
 }
 
 void
-bst_proc(BSTREE *tp, BST_TRV_ORDER odr, void (*func_p) (const bst_node *node))
+bst_foreach(BSTREE *tp, BST_TRV_ORDER odr, void (*func_p) (const bst_node *node))
 {  
   if (tp == NULL)
 	return;
   if (func_p == NULL)
 	return;
   
-  process(tp->root, odr, func_p);
+  foreach(tp->root, odr, func_p);
 }
 
 static void
-process(bst_node *beg, BST_TRV_ORDER odr, void (*func_p) (const bst_node *node))
+foreach(bst_node *beg, BST_TRV_ORDER odr, void (*func_p) (const bst_node *node))
 {
     bst_node *np;
 
@@ -254,24 +254,24 @@ process(bst_node *beg, BST_TRV_ORDER odr, void (*func_p) (const bst_node *node))
 	  if (np->deleted != 1)
 		func_p(np);
 	  if (np->left != NULL)
-		process(np->left, BST_PREORDER, func_p);
+		foreach(np->left, BST_PREORDER, func_p);
 	  if (np->right != NULL)
-		process(np->right, BST_PREORDER, func_p);
+		foreach(np->right, BST_PREORDER, func_p);
 	  break;
 	case BST_INORDER:
 	  if (np->left != NULL)
-		process(np->left, BST_INORDER, func_p);
+		foreach(np->left, BST_INORDER, func_p);
 	  if (np->deleted != 1)
 		func_p(np);
 	  if (np->right != NULL)
-		process(np->right, BST_INORDER, func_p);
+		foreach(np->right, BST_INORDER, func_p);
 	  break;
 	default:
 	case BST_POSTORDER:
 	  if (np->left != NULL)
-		process(np->left, BST_POSTORDER, func_p);
+		foreach(np->left, BST_POSTORDER, func_p);
 	  if (np->right != NULL)
-		process(np->right, BST_POSTORDER, func_p);
+		foreach(np->right, BST_POSTORDER, func_p);
 	  if (np->deleted != 1)
 		func_p(np);
 	  break;

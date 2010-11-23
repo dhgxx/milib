@@ -28,6 +28,6 @@ void tr_free(TREE **);
 tr_node *tr_find(const char *, TREE *);
 int tr_add_sbl(const char *, const char *, TREE *);
 int tr_add_cld(const char *, const char *, TREE *);
-void tr_proc(TREE *, void (*) (const tr_node *));
+void tr_foreach(TREE *, void (*) (const tr_node *));
 
 #endif /* _TREE_H_ */
