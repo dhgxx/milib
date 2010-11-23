@@ -44,21 +44,22 @@ st_mknode(const char *str)
 }
 
 int
-st_push(const char *str, STACK *st)
+st_push(const char *str, STACK **st)
 {
   st_node  *np;
+  STACK *stp = *st;
   
   if (str == NULL)
 	return (-1);
-  if (st == NULL)
+  if (stp == NULL)
 	return (-1);
     
   np = st_mknode(str);
 
   if (np != NULL) {
-	np->next = st->top;
-	st->top = np;
-	st->size++;
+	np->next = stp->top;
+	stp->top = np;
+	stp->size++;
 	return (0);
   }
 
@@ -66,19 +67,20 @@ st_push(const char *str, STACK *st)
 }
 
 st_node *
-st_pop(STACK *st)
+st_pop(STACK **st)
 {
   st_node *np;
+  STACK *stp = *st;
 
-  if (st == NULL)
+  if (stp == NULL)
 	return (NULL);
-  if (st_empty(st))
+  if (st_empty(stp))
 	return (NULL);
 
-  np = st->top;
-  st->top = np->next;
+  np = stp->top;
+  stp->top = np->next;
   np->next = NULL;
-  st->size--;
+  stp->size--;
   return (np);
 }
 
@@ -99,7 +101,7 @@ st_free(STACK **st)
   }
 
   do {
-	np = st_pop(stp);
+	np = st_pop(&stp);
 	if (np != NULL) {
 	  free(np);
 	  np = NULL;

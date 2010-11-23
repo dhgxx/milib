@@ -1,7 +1,7 @@
 #include "bstree.h"
 
 static bst_node *locate(const char *, bst_node *);
-static int insert(const char *, bst_node *, int);
+static int insert(const char *, bst_node **, int);
 static void foreach(bst_node *, BST_TRV_ORDER, void (*) (const bst_node *));
 static void mem_free(bst_node **);
 
@@ -102,8 +102,10 @@ locate(const char *str, bst_node *n)
 }
 
 int
-bst_ins(const char *str, BSTREE *tp, const int ic)
+bst_ins(const char *str, BSTREE **t, const int ic)
 {
+  BSTREE *tp = *t;
+  
   if (str == NULL)
 	return (-1);
   if (tp == NULL)
@@ -118,7 +120,7 @@ bst_ins(const char *str, BSTREE *tp, const int ic)
 	return (0);
   }
   
-  if (0 == insert(str, tp->root, ic)) {
+  if (0 == insert(str, &(tp->root), ic)) {
 	tp->size++;
 	return (0);
   }
@@ -127,10 +129,11 @@ bst_ins(const char *str, BSTREE *tp, const int ic)
 }
 
 static int
-insert(const char *str, bst_node *pos, const int ic)
+insert(const char *str, bst_node **src, const int ic)
 {
   int m, ret;
   bst_node *np;
+  bst_node *pos = *src;
 
   if (str == NULL)
 	return (-1);
@@ -146,7 +149,7 @@ insert(const char *str, bst_node *pos, const int ic)
 	  if (NULL != (np->left = bst_mknode(str)))
 		ret = 0;
 	} else {
-	  ret = insert(str, np->left, ic);
+	  ret = insert(str, &(np->left), ic);
 	}
   }
 
@@ -155,7 +158,7 @@ insert(const char *str, bst_node *pos, const int ic)
 	  if (NULL != (np->left = bst_mknode(str)))
 		ret = 0;
 	} else {
-	  ret = insert(str, np->left, ic);
+	  ret = insert(str, &(np->left), ic);
 	}
   }
 	
@@ -164,7 +167,7 @@ insert(const char *str, bst_node *pos, const int ic)
 	  if (NULL != (np->right = bst_mknode(str)))
 		ret = 0;
 	} else {
-	  ret = insert(str, np->right, ic);
+	  ret = insert(str, &(np->right), ic);
 	}
   }
 
@@ -172,9 +175,10 @@ insert(const char *str, bst_node *pos, const int ic)
 }
 
 int
-bst_del(const char *str, BSTREE *tp)
+bst_del(const char *str, BSTREE **t)
 {
   bst_node *np;
+  BSTREE *tp = *t;
 
   if (str == NULL)
 	return (-1);

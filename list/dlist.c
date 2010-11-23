@@ -1,8 +1,8 @@
 #include "dlist.h"
 
-static void ins_after(dl_node *, dl_node *);
-static void ins_before(dl_node *, dl_node *);
-static int swap(dl_node *, dl_node *);
+static void ins_after(dl_node **, dl_node **);
+static void ins_before(dl_node **, dl_node **);
+static int swap(dl_node **, dl_node **);
 
 dl_node *
 dl_mknode(const char *str)
@@ -55,31 +55,35 @@ dl_empty(const DLIST *dl)
 }
 
 int
-dl_append(const char *str, DLIST *dl)
+dl_append(const char *str, DLIST **dl)
 {
   dl_node *new;
+  DLIST *dlp = *dl;
   
-  if (dl == NULL)
+  if (dlp == NULL)
 	return (-1);
 
   new = dl_mknode(str);
 
-  if (dl_empty(dl)) {
-	dl->head = new;
+  if (dl_empty(dlp)) {
+	dlp->head = new;
   } else {
-	dl->tail->next = new;
-	new->pre = dl->tail;
+	dlp->tail->next = new;
+	new->pre = dlp->tail;
   }
 	
-  dl->cur = new;
-  dl->tail = new;
-  dl->len++;
+  dlp->cur = new;
+  dlp->tail = new;
+  dlp->len++;
   return (0);
 }
 
 static void
-ins_after(dl_node *np, dl_node *new)
+ins_after(dl_node **src, dl_node **dst)
 {
+  dl_node *np = *src;
+  dl_node *new = *dst;
+  
   new->pre = np;
   new->next = np->next;
   if (np->next != NULL)
@@ -88,8 +92,11 @@ ins_after(dl_node *np, dl_node *new)
 }
 
 static void
-ins_before(dl_node *np, dl_node *new)
+ins_before(dl_node **src, dl_node **dst)
 {
+  dl_node *np = *src;
+  dl_node *new = *dst;
+  
   new->next = np;
   if (np->pre != NULL) {	
 	new->pre = np->pre;
@@ -99,8 +106,10 @@ ins_before(dl_node *np, dl_node *new)
 }
 
 static int
-swap(dl_node *front, dl_node *rear)
+swap(dl_node **f, dl_node **r)
 {
+  dl_node *front = *f;
+  dl_node *rear = *r;
   dl_node *fp, *rn;
   
   if (front == NULL ||
@@ -165,49 +174,50 @@ swap(dl_node *front, dl_node *rear)
 }
 
 int
-dl_ins_at_pos(const char *str, int pos, DLIST *dl, const int before)
+dl_ins_at_pos(const char *str, int pos, DLIST **dl, const int before)
 {
   int i;
   dl_node *new, *np;
+  DLIST *dlp = *dl;
   
   if (str == NULL)
 	return (-1);
 
-  if (dl == NULL)
+  if (dlp == NULL)
 	return (-1);
 	
   new = dl_mknode(str);
 	
-  if (dl_empty(dl)) {
-	dl->cur = dl->head = dl->tail = new;
-	dl->len++;
+  if (dl_empty(dlp)) {
+	dlp->cur = dlp->head = dlp->tail = new;
+	dlp->len++;
   } else {
-	dl->cur = new;
+	dlp->cur = new;
 	if (pos <= 0) {
-	  new->next = dl->head;
-	  dl->head->pre = new;
-	  dl->head = new;
-	  dl->len++;
+	  new->next = dlp->head;
+	  dlp->head->pre = new;
+	  dlp->head = new;
+	  dlp->len++;
 	}
 
-	if (pos > 0 && pos < dl->len) {
-	  np = dl->head;
+	if (pos > 0 && pos < dlp->len) {
+	  np = dlp->head;
 	  for (i = 0; i < pos && np; i++)
 		np = np->next;
 
 	  if (before == 1)
-		ins_before(np, new);
+		ins_before(&np, &new);
 	  else
-		ins_after(np, new);
+		ins_after(&np, &new);
 	  
-	  dl->len++;
+	  dlp->len++;
 	}
 
-	if (pos >= dl->len) {
-	  new->pre = dl->tail->pre;
-	  dl->tail->next = new;
-	  dl->tail = new;
-	  dl->len++;
+	if (pos >= dlp->len) {
+	  new->pre = dlp->tail->pre;
+	  dlp->tail->next = new;
+	  dlp->tail = new;
+	  dlp->len++;
 	}
   }
 
@@ -215,37 +225,38 @@ dl_ins_at_pos(const char *str, int pos, DLIST *dl, const int before)
 }
 
 int
-dl_ins_at_val(const char *str, const char *pos, DLIST *dl, const int before)
+dl_ins_at_val(const char *str, const char *pos, DLIST **dl, const int before)
 {
   dl_node *new, *np;
+  DLIST *dlp = *dl;
   
   if ((str == NULL) ||
 	  (pos == NULL))
 	return (-1);
 
-  if (dl == NULL)
+  if (dlp == NULL)
 	return (-1);
 
-  dl->cur = new = dl_mknode(str);
+  dlp->cur = new = dl_mknode(str);
 	
-  if (dl_empty(dl)) {
-	dl->head = dl->tail = new;
-	dl->len++;
+  if (dl_empty(dlp)) {
+	dlp->head = dlp->tail = new;
+	dlp->len++;
   } else {
-	np = dl->head;
+	np = dlp->head;
 	while (np) {
 	  if (0 == strncmp(pos, np->node, strlen(pos) + 1)) {
 		if (before == 1) {
-		  ins_before(np, new);
-		  if (np == dl->head)
-			dl->head = new;
+		  ins_before(&np, &new);
+		  if (np == dlp->head)
+			dlp->head = new;
 		} else {
-		  ins_after(np, new);
-		  if (np == dl->tail)
-			dl->tail = new;
+		  ins_after(&np, &new);
+		  if (np == dlp->tail)
+			dlp->tail = new;
 		}
 		
-		dl->len++;
+		dlp->len++;
 		break;
 	  }
 	  np = np->next;
@@ -255,27 +266,28 @@ dl_ins_at_val(const char *str, const char *pos, DLIST *dl, const int before)
 }
 
 void
-dl_sort(DLIST *dl)
+dl_sort(DLIST **dl)
 {
   int m, ret;
   char *pre, *next;
   dl_node *front, *rear;
+  DLIST *dlp = *dl;
   
-  if (dl == NULL)
+  if (dlp == NULL)
 	return;
 
-  if (dl_empty(dl))
+  if (dl_empty(dlp))
 	return;
 
-  if (dl->tail == dl->head &&
-	  dl->len == 1)
+  if (dlp->tail == dlp->head &&
+	  dlp->len == 1)
 	return;
 
-  rear = dl->tail;
+  rear = dlp->tail;
   front = rear->pre;
-  dl->cur = front;
+  dlp->cur = front;
 
-  while (dl->cur != NULL) {
+  while (dlp->cur != NULL) {
 
 	pre = front->node;
 	next = rear->node;
@@ -286,7 +298,7 @@ dl_sort(DLIST *dl)
 	  m = -1;
 
 	if (m > 0)
-	  ret = swap(front, rear);
+	  ret = swap(&front, &rear);
 	else
 	  ret = 1;
 
@@ -294,39 +306,41 @@ dl_sort(DLIST *dl)
 #ifdef _DEBUG_
 	  fprintf(stderr, "swaping %s and %s\n", pre, next);
 #endif
-	  if (dl->tail == rear)
-		dl->tail = front;
-	  if (dl->head == front)
-		dl->head = rear;
-	  front = dl->cur;
+	  if (dlp->tail == rear)
+		dlp->tail = front;
+	  if (dlp->head == front)
+		dlp->head = rear;
+	  front = dlp->cur;
 	  rear = front->next;
 	} else {
-	  front = dl->cur->pre;
-	  rear = dl->cur;
+	  front = dlp->cur->pre;
+	  rear = dlp->cur;
 	}
 
-	dl->cur = front;
+	dlp->cur = front;
   }
 }
 
 int
-dl_delete(const char *str, DLIST *dl)
-{  
+dl_delete(const char *str, DLIST **dl)
+{
+  DLIST *dlp = *dl;
+  
   if (str == NULL)
 	return (-1);
 
-  if (dl == NULL)
+  if (dlp == NULL)
 	return (-1);
   
-  if (!dl_empty(dl)) {
-	dl->cur = dl->head;
-	while (dl->cur) {
-	  if (0 == strncmp(str, dl->cur->node, strlen(str) + 1)) {
-		dl->cur->deleted = 1;
-		dl->len--;
+  if (!dl_empty(dlp)) {
+	dlp->cur = dlp->head;
+	while (dlp->cur) {
+	  if (0 == strncmp(str, dlp->cur->node, strlen(str) + 1)) {
+		dlp->cur->deleted = 1;
+		dlp->len--;
 		return (0);
 	  }
-	  dl->cur = dl->cur->next;
+	  dlp->cur = dlp->cur->next;
 	}
 	return (0);
   }

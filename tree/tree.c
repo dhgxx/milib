@@ -144,9 +144,10 @@ locate(const char *str, tr_node *np)
 }
 
 int
-tr_add_sbl(const char *str, const char *src, TREE *tp)
+tr_add_sbl(const char *str, const char *src, TREE **t)
 {
   tr_node *np;
+  TREE *tp = *t;
   
   if (str == NULL)
 	return (-1);
@@ -174,9 +175,10 @@ tr_add_sbl(const char *str, const char *src, TREE *tp)
 }
 
 int
-tr_add_cld(const char *str, const char *src, TREE *tp)
+tr_add_cld(const char *str, const char *src, TREE **t)
 {
   tr_node *np;
+  TREE *tp = *t;
 
   if (str == NULL)
 	return (-1);
