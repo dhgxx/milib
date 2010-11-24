@@ -39,15 +39,17 @@ dl_init(void)
 }
 
 int
-dl_empty(const DLIST *dl)
+dl_empty(DLIST **dl)
 {
-  if (dl == NULL)
+  DLIST *dlp = *dl;
+  
+  if (dlp == NULL)
 	return (1);
 
-  if ((dl->head == NULL) &&
-	  (dl->tail == NULL) &&
-	  (dl->cur == NULL) &&
-	  (dl->len == 0)) {
+  if ((dlp->head == NULL) &&
+	  (dlp->tail == NULL) &&
+	  (dlp->cur == NULL) &&
+	  (dlp->len == 0)) {
 	return (1);
   }
 
@@ -65,7 +67,7 @@ dl_append(const char *str, DLIST **dl)
 
   new = dl_mknode(str);
 
-  if (dl_empty(dlp)) {
+  if (dl_empty(&dlp)) {
 	dlp->head = new;
   } else {
 	dlp->tail->next = new;
@@ -188,7 +190,7 @@ dl_ins_at_pos(const char *str, int pos, DLIST **dl, const int before)
 	
   new = dl_mknode(str);
 	
-  if (dl_empty(dlp)) {
+  if (dl_empty(&dlp)) {
 	dlp->cur = dlp->head = dlp->tail = new;
 	dlp->len++;
   } else {
@@ -239,7 +241,7 @@ dl_ins_at_val(const char *str, const char *pos, DLIST **dl, const int before)
 
   dlp->cur = new = dl_mknode(str);
 	
-  if (dl_empty(dlp)) {
+  if (dl_empty(&dlp)) {
 	dlp->head = dlp->tail = new;
 	dlp->len++;
   } else {
@@ -276,7 +278,7 @@ dl_sort(DLIST **dl)
   if (dlp == NULL)
 	return;
 
-  if (dl_empty(dlp))
+  if (dl_empty(&dlp))
 	return;
 
   if (dlp->tail == dlp->head &&
@@ -332,7 +334,7 @@ dl_delete(const char *str, DLIST **dl)
   if (dlp == NULL)
 	return (-1);
   
-  if (!dl_empty(dlp)) {
+  if (!dl_empty(&dlp)) {
 	dlp->cur = dlp->head;
 	while (dlp->cur) {
 	  if (0 == strncmp(str, dlp->cur->node, strlen(str) + 1)) {
@@ -348,20 +350,21 @@ dl_delete(const char *str, DLIST **dl)
 }
 
 void
-dl_foreach(DLIST *dl, void (*func_p) (const dl_node *np))
+dl_foreach(DLIST **dl, void (*func_p) (dl_node **np))
 {
-  if (dl == NULL)
+  DLIST *dlp = *dl;
+  
+  if (dlp == NULL)
 	return;
 
   if (func_p == NULL)
 	return;
 
-  if (!dl_empty(dl)) {
-	dl->cur = dl->head;
-	while (dl->cur) {
-	  if (dl->cur->deleted != 1)
-		func_p(dl->cur);
-	  dl->cur = dl->cur->next;
+  if (!dl_empty(&dlp)) {
+	dlp->cur = dlp->head;
+	while (dlp->cur) {
+	  func_p(&(dlp->cur));
+	  dlp->cur = dlp->cur->next;
 	}
   }
 }
@@ -377,7 +380,7 @@ dl_free(DLIST **dl)
   if (dlp == NULL)
 	return;
 
-  if (dl_empty(dlp)) {
+  if (dl_empty(&dlp)) {
 	free(dlp);
 	dlp = NULL;
 	return;

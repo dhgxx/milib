@@ -1,7 +1,7 @@
 #include "tree.h"
 
-static void foreach(tr_node *, void (*)(const tr_node *));
-static tr_node *locate(const char *, tr_node *);
+static void foreach(tr_node **, void (*) (tr_node **));
+static tr_node *locate(const char *, tr_node **);
 static void mem_free(tr_node **);
 
 tr_node *
@@ -42,8 +42,10 @@ tr_init(void)
 }
 
 int
-tr_empty(TREE *tp)
+tr_empty(TREE **t)
 {
+  TREE *tp = *t;
+  
   if (tp == NULL)
 	return (1);
 
@@ -63,7 +65,7 @@ tr_free(TREE **tp)
 
   if (p == NULL)
 	return;
-  if (tr_empty(p)) {
+  if (tr_empty(&p)) {
 	free(p);
 	p = NULL;
 	return;
@@ -79,52 +81,59 @@ tr_free(TREE **tp)
 }
 
 tr_node *
-tr_find(const char *str, TREE *tp)
+tr_find(const char *str, TREE **t)
 {
   tr_node *np;
+  TREE *tp = *t;
   
   if (str == NULL)
 	return (NULL);
   if (tp == NULL)
 	return (NULL);
-  if (tr_empty(tp))
+  if (tr_empty(&tp))
 	return (NULL);
 
-  return (np = locate(str, tp->root));
+  return (np = locate(str, &(tp->root)));
 }
 
 void
-tr_foreach(TREE *tp, void (*func_p)(const tr_node *np))
-{  
+tr_foreach(TREE **t, void (*func_p)(tr_node **np))
+{
+  TREE *tp = *t;
+  
   if (tp == NULL)
 	return;
   if (func_p == NULL)
 	return;
-  if (tr_empty(tp))
+  if (tr_empty(&tp))
 	return;
 
-  foreach(tp->root, func_p);
+  foreach(&(tp->root), func_p);
 }
 
 static void
-foreach(tr_node *np, void (*func_p)(const tr_node *np))
+foreach(tr_node **n, void (*func_p) (tr_node **node))
 {
+  tr_node *np = *n;
+  
   if (np == NULL)
 	return;
   if (func_p == NULL)
 	return;
 
-  func_p(np);
+  func_p(&np);
 
   if (np->sbl != NULL)
-	foreach(np->sbl, func_p);
+	foreach(&(np->sbl), func_p);
   if (np->cld != NULL)
-	foreach(np->cld, func_p);
+	foreach(&(np->cld), func_p);
 }
 
 static tr_node *
-locate(const char *str, tr_node *np)
+locate(const char *str, tr_node **n)
 {
+  tr_node *np = *n;
+  
   if (str == NULL)
 	return (NULL);
   if (np == NULL)
@@ -136,9 +145,9 @@ locate(const char *str, tr_node *np)
 	return (np);
 
   if (np->sbl != NULL)
-	np = locate(str, np->sbl);
+	np = locate(str, &(np->sbl));
   if (np->cld != NULL)
-	np = locate(str, np->cld);
+	np = locate(str, &(np->cld));
 
   return (np);
 }
@@ -156,13 +165,13 @@ tr_add_sbl(const char *str, const char *src, TREE **t)
   if (tp == NULL)
 	return (-1);
   
-  if (tr_empty(tp)) {
+  if (tr_empty(&tp)) {
 	tp->cur = tp->root = tr_mknode(str);
 	tp->size++;
 	return (0);
   }
 
-  if (NULL == (np = locate(src, tp->root)))
+  if (NULL == (np = locate(src, &(tp->root))))
 	return (-1);
 
   while (np->sbl != NULL)
@@ -187,13 +196,13 @@ tr_add_cld(const char *str, const char *src, TREE **t)
   if (tp == NULL)
 	return (-1);
 
-  if (tr_empty(tp)) {
+  if (tr_empty(&tp)) {
 	tp->cur = tp->root = tr_mknode(str);
 	tp->size++;
 	return (0);
   }
 
-  if (NULL == (np = locate(src, tp->root)))
+  if (NULL == (np = locate(src, &(tp->root))))
 	return (-1);
 
   if (np->cld == NULL) {  

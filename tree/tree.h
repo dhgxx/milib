@@ -23,11 +23,11 @@ typedef struct _tree {
 
 tr_node *tr_mknode(const char *);
 TREE *tr_init(void);
-int tr_empty(TREE *);
+int tr_empty(TREE **);
 void tr_free(TREE **);
-tr_node *tr_find(const char *, TREE *);
+tr_node *tr_find(const char *, TREE **);
 int tr_add_sbl(const char *, const char *, TREE **);
 int tr_add_cld(const char *, const char *, TREE **);
-void tr_foreach(TREE *, void (*) (const tr_node *));
+void tr_foreach(TREE **, void (*) (tr_node **));
 
 #endif /* _TREE_H_ */

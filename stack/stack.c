@@ -14,13 +14,15 @@ st_init(void)
 }
 
 int
-st_empty(STACK *st)
+st_empty(STACK **st)
 {
-  if (st == NULL)
+  STACK *stp = *st;
+  
+  if (stp == NULL)
 	return (1);
   
-  if (st->top == NULL &&
-	  st->size == 0)
+  if (stp->top == NULL &&
+	  stp->size == 0)
 	return (1);
   
   return (0);
@@ -74,7 +76,7 @@ st_pop(STACK **st)
 
   if (stp == NULL)
 	return (NULL);
-  if (st_empty(stp))
+  if (st_empty(&stp))
 	return (NULL);
 
   np = stp->top;
@@ -94,7 +96,7 @@ st_free(STACK **st)
   if (stp == NULL)
 	return;
 
-  if (st_empty(stp)) {
+  if (st_empty(&stp)) {
 	free(stp);
 	stp = NULL;
 	return;
@@ -106,7 +108,7 @@ st_free(STACK **st)
 	  free(np);
 	  np = NULL;
 	}
-  } while (st_empty(stp) != 1);
+  } while (st_empty(&stp) != 1);
 
   if (stp != NULL) {
 	free(stp);
@@ -115,21 +117,22 @@ st_free(STACK **st)
 }
 
 void
-st_foreach(STACK *st, void (*func_p) (const st_node *np))  
+st_foreach(STACK **st, void (*func_p) (st_node **np))  
 {
   st_node *np;
-
-  if (st == NULL)
+  STACK *stp = *st;
+  
+  if (stp == NULL)
 	return;
   if (func_p == NULL)
 	return;
-  if (st_empty(st))
+  if (st_empty(&stp))
 	return;
   
-  np = st->top;
+  np = stp->top;
  
   while (np != NULL) {
-	func_p(np);
+	func_p(&np);
 	np = np->next;
   }
 }

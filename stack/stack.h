@@ -21,11 +21,11 @@ typedef struct _stack {
 
 
 STACK *st_init(void);
-int st_empty(STACK *);
+int st_empty(STACK **);
 st_node *st_pop(STACK **);
 int st_push(const char *, STACK **);
 st_node *st_mknode(const char *);
-void st_foreach(STACK *, void (*) (const st_node *));
+void st_foreach(STACK **, void (*) (st_node **));
 void st_free(STACK **);
 
 #endif /* _STACK_H_ */
