@@ -39,8 +39,8 @@ st_mknode(const char *str)
   if ((np = (st_node *)malloc(sizeof(st_node))) == NULL)
 	return (NULL);
 
-  bzero(np->entry, ST_ENT_SIZE);
-  strncpy(np->entry, str, ST_ENT_SIZE);
+  bzero(np->ent, ST_ENTSIZ);
+  strncpy(np->ent, str, ST_ENTSIZ);
   np->next = NULL;
   return (np);
 }

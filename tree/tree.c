@@ -15,8 +15,8 @@ tr_mknode(const char *str)
   np = (tr_node *)malloc(sizeof(tr_node));
 
   if (np != NULL) {
-	bzero(np->ent, TR_ENT_SIZE);
-	strncpy(np->ent, str, TR_ENT_SIZE);
+	bzero(np->ent, TR_ENTSIZ);
+	strncpy(np->ent, str, TR_ENTSIZ);
 	np->sbl = NULL;
 	np->eld = NULL;
 	np->prt = NULL;

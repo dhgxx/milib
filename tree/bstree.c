@@ -15,8 +15,8 @@ bst_mknode(const char *str)
   if (NULL == (np = (bst_node *)malloc(sizeof(bst_node))))
 	return (NULL);
 
-  bzero(np->node, BST_ENT_SIZE);
-  strncpy(np->node, str, BST_ENT_SIZE);
+  bzero(np->ent, BST_ENTSIZ);
+  strncpy(np->ent, str, BST_ENTSIZ);
   np->left = NULL;
   np->right = NULL;
   np->deleted = 0;
@@ -80,7 +80,7 @@ locate(const char *str, bst_node **n)
   cur = np = *n;
   
   if (np->deleted != 1) {
-	m = strncmp(str, np->node, strlen(str) + 1);
+	m = strncmp(str, np->ent, strlen(str) + 1);
 	
 	if (0 == m)
 	  return (np);
@@ -144,7 +144,7 @@ insert(const char *str, bst_node **src, const int ic)
 
   ret = -1;
   np = locate(str, &(pos));
-  m = strncmp(str, np->node, strlen(str) + 1);
+  m = strncmp(str, np->ent, strlen(str) + 1);
 
   if (ic == 1 && m == 0) {
 	if (np->left == NULL) {

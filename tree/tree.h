@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TR_ENT_SIZE 256
+#define TR_ENTSIZ 256
 
 typedef struct _tr_node_t {
-  char ent[TR_ENT_SIZE];
+  char ent[TR_ENTSIZ];
   struct _tr_node_t *sbl;
   struct _tr_node_t *eld;
   struct _tr_node_t *prt;

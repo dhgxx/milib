@@ -15,8 +15,8 @@ dl_mknode(const char *str)
   if ((np = (dl_node *)malloc(sizeof(dl_node))) == NULL)
 	return (NULL);
   
-  bzero(np->node, DL_ENT_SIZE);
-  strncpy(np->node, str, strlen(str) + 1);
+  bzero(np->ent, DL_ENTSIZ);
+  strncpy(np->ent, str, DL_ENTSIZ);
   np->deleted = 0;
   np->pre = NULL;
   np->next = NULL;
@@ -247,7 +247,7 @@ dl_ins_at_val(const char *str, const char *pos, DLIST **dl, const int before)
   } else {
 	np = dlp->head;
 	while (np) {
-	  if (0 == strncmp(pos, np->node, strlen(pos) + 1)) {
+	  if (0 == strncmp(pos, np->ent, strlen(pos) + 1)) {
 		if (before == 1) {
 		  ins_before(&np, &new);
 		  if (np == dlp->head)
@@ -291,8 +291,8 @@ dl_sort(DLIST **dl)
 
   while (dlp->cur != NULL) {
 
-	pre = front->node;
-	next = rear->node;
+	pre = front->ent;
+	next = rear->ent;
 
 	if (pre != NULL && next != NULL)
 	  m = strncmp(pre, next, strlen(next) + 1);
@@ -337,7 +337,7 @@ dl_delete(const char *str, DLIST **dl)
   if (!dl_empty(&dlp)) {
 	dlp->cur = dlp->head;
 	while (dlp->cur) {
-	  if (0 == strncmp(str, dlp->cur->node, strlen(str) + 1)) {
+	  if (0 == strncmp(str, dlp->cur->ent, strlen(str) + 1)) {
 		dlp->cur->deleted = 1;
 		dlp->len--;
 		return (0);
@@ -386,15 +386,15 @@ dl_free(DLIST **dl)
 	return;
   }
 	  
-  np = dlp->tail;
-  dlp->cur = dlp->tail->pre;
-  
+  np = dlp->head;
+  dlp->cur = dlp->head->next;
+
   while (np != NULL) {
 	free(np);
 	np = NULL;
 	np = dlp->cur;
 	if (dlp->cur != NULL)
-	  dlp->cur = dlp->cur->pre;
+	  dlp->cur = dlp->cur->next;
   }
 
   if (dlp != NULL) {
