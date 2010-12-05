@@ -395,7 +395,7 @@ dl_clear(DLIST **dl)
 	}
   }
 
-  dlp->cur = dlp->head = NULL;
+  dlp->cur = dlp->head = dlp->tail = NULL;
   dlp->len = 0;
 }
 
