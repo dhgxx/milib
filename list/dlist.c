@@ -379,13 +379,9 @@ dl_clear(DLIST **dl)
 
   if (dlp == NULL)
 	return;
-
-  if (dl_empty(&dlp)) {
-	free(dlp);
-	dlp = NULL;
+  if (dl_empty(&dlp))
 	return;
-  }
-	  
+
   np = dlp->head;
   dlp->cur = dlp->head->next;
 
@@ -401,12 +397,31 @@ dl_clear(DLIST **dl)
 void
 dl_free(DLIST **dl)
 {
+  dl_node *np;
   DLIST *dlp;
 
   dlp = *dl;
   
-  dl_clear(&dlp);
+  if (dlp == NULL)
+	return;
   
+  if (dl_empty(&dlp)) {
+	free(dlp);
+	dlp = NULL;
+	return;
+  }
+
+  np = dlp->head;
+  dlp->cur = dlp->head->next;
+  
+  while (np != NULL) {
+	free(np);
+	np = NULL;
+	np = dlp->cur;
+	if (dlp->cur != NULL)
+	  dlp->cur = dlp->cur->next;
+  }
+
   if (dlp != NULL) {
 	free(dlp);
 	dlp = NULL;
