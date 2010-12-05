@@ -30,6 +30,7 @@ int dl_ins_at_val(const char *, const char *, DLIST **, const int);
 void dl_sort(DLIST **);
 int dl_delete(const char *, DLIST **);
 void dl_foreach(DLIST **, void (*) (dl_node **));
+void dl_clear(DLIST **);
 void dl_free(DLIST **);
 
 #endif /* _DLIST_H_ */

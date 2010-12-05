@@ -370,13 +370,13 @@ dl_foreach(DLIST **dl, void (*func_p) (dl_node **np))
 }
 
 void
-dl_free(DLIST **dl)
+dl_clear(DLIST **dl)
 {
   dl_node *np;
   DLIST *dlp;
 
   dlp = *dl;
-  
+
   if (dlp == NULL)
 	return;
 
@@ -396,7 +396,17 @@ dl_free(DLIST **dl)
 	if (dlp->cur != NULL)
 	  dlp->cur = dlp->cur->next;
   }
+}
 
+void
+dl_free(DLIST **dl)
+{
+  DLIST *dlp;
+
+  dlp = *dl;
+  
+  dl_clear(&dlp);
+  
   if (dlp != NULL) {
 	free(dlp);
 	dlp = NULL;
