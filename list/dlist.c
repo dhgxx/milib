@@ -389,9 +389,14 @@ dl_clear(DLIST **dl)
 	free(np);
 	np = NULL;
 	np = dlp->cur;
-	if (dlp->cur != NULL)
+	if (dlp->cur != NULL) {
 	  dlp->cur = dlp->cur->next;
+	  dlp->len--;
+	}
   }
+
+  dlp->cur = dlp->head = NULL;
+  dlp->len = 0;
 }
 
 void
