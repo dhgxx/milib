@@ -16,7 +16,7 @@ tr_mknode(const char *str)
 
   if (np != NULL) {
 	bzero(np->ent, TR_ENTSIZ);
-	strncpy(np->ent, str, TR_ENTSIZ);
+	strlcpy(np->ent, str, TR_ENTSIZ);
 	np->sbl = NULL;
 	np->eld = NULL;
 	np->prt = NULL;

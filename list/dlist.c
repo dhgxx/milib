@@ -16,7 +16,7 @@ dl_mknode(const char *str)
 	return (NULL);
   
   bzero(np->ent, DL_ENTSIZ);
-  strncpy(np->ent, str, DL_ENTSIZ);
+  strlcpy(np->ent, str, DL_ENTSIZ);
   np->deleted = 0;
   np->pre = NULL;
   np->next = NULL;

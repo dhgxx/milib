@@ -40,7 +40,7 @@ st_mknode(const char *str)
 	return (NULL);
 
   bzero(np->ent, ST_ENTSIZ);
-  strncpy(np->ent, str, ST_ENTSIZ);
+  strlcpy(np->ent, str, ST_ENTSIZ);
   np->next = NULL;
   return (np);
 }
