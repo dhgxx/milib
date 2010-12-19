@@ -25,6 +25,8 @@
  *
  */
 
+#include <assert.h>
+
 #include "stack.h"
 
 STACK *
@@ -41,10 +43,8 @@ st_init(void)
 }
 
 int
-st_empty(STACK **st)
-{
-  STACK *stp = *st;
-  
+st_empty(STACK *stp)
+{  
   if (stp == NULL)
 	return (1);
   
@@ -60,8 +60,7 @@ st_mknode(const char *str)
 {
   st_node  *np;
 
-  if (str == NULL)
-	return (NULL);
+  assert(str != NULL);
 
   if ((np = (st_node *)malloc(sizeof(st_node))) == NULL)
 	return (NULL);
@@ -73,18 +72,15 @@ st_mknode(const char *str)
 }
 
 int
-st_push(const char *str, STACK **st)
+st_push(const char *str, STACK *stp)
 {
   st_node  *np;
-  STACK *stp = *st;
   
-  if (str == NULL)
-	return (-1);
-  if (stp == NULL)
-	return (-1);
-    
+  assert((str != NULL) &&
+		 (stp != NULL));
+  
   np = st_mknode(str);
-
+  
   if (np != NULL) {
 	np->next = stp->top;
 	stp->top = np;
@@ -96,14 +92,13 @@ st_push(const char *str, STACK **st)
 }
 
 st_node *
-st_pop(STACK **st)
+st_pop(STACK *stp)
 {
   st_node *np;
-  STACK *stp = *st;
 
-  if (stp == NULL)
-	return (NULL);
-  if (st_empty(&stp))
+  assert(stp != NULL);
+  
+  if (st_empty(stp))
 	return (NULL);
 
   np = stp->top;
@@ -114,28 +109,25 @@ st_pop(STACK **st)
 }
 
 void
-st_free(STACK **st)
+st_free(STACK *stp)
 {
   st_node *np;
-  STACK *stp;
 
-  stp = *st;
-  if (stp == NULL)
-	return;
+  assert(stp != NULL);
 
-  if (st_empty(&stp)) {
+  if (st_empty(stp)) {
 	free(stp);
 	stp = NULL;
 	return;
   }
 
   do {
-	np = st_pop(&stp);
+	np = st_pop(stp);
 	if (np != NULL) {
 	  free(np);
 	  np = NULL;
 	}
-  } while (st_empty(&stp) != 1);
+  } while (st_empty(stp) != 1);
 
   if (stp != NULL) {
 	free(stp);
@@ -144,22 +136,18 @@ st_free(STACK **st)
 }
 
 void
-st_foreach(STACK **st, void (*func_p) (st_node **np))  
+st_foreach(STACK *stp, void (*func_p) (st_node *np))  
 {
   st_node *np;
-  STACK *stp = *st;
   
-  if (stp == NULL)
-	return;
-  if (func_p == NULL)
-	return;
-  if (st_empty(&stp))
-	return;
+  assert((stp != NULL) &&
+		 (func_p != NULL) &&
+		 !st_empty(stp));
   
   np = stp->top;
  
   while (np != NULL) {
-	func_p(&np);
+	func_p(np);
 	np = np->next;
   }
 }

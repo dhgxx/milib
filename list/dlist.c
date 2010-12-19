@@ -25,11 +25,13 @@
  *
  */
 
+#include <assert.h>
+
 #include "dlist.h"
 
-static void ins_after(dl_node **, dl_node **);
-static void ins_before(dl_node **, dl_node **);
-static int swap(dl_node **, dl_node **);
+static void ins_after(dl_node *, dl_node *);
+static void ins_before(dl_node *, dl_node *);
+static int swap(dl_node *, dl_node *);
 
 dl_node *
 dl_mknode(const char *str)
@@ -66,10 +68,8 @@ dl_init(void)
 }
 
 int
-dl_empty(DLIST **dl)
-{
-  DLIST *dlp = *dl;
-  
+dl_empty(DLIST *dlp)
+{  
   if (dlp == NULL)
 	return (1);
 
@@ -84,17 +84,16 @@ dl_empty(DLIST **dl)
 }
 
 int
-dl_append(const char *str, DLIST **dl)
+dl_append(const char *str, DLIST *dlp)
 {
   dl_node *new;
-  DLIST *dlp = *dl;
   
   if (dlp == NULL)
 	return (-1);
 
   new = dl_mknode(str);
 
-  if (dl_empty(&dlp)) {
+  if (dl_empty(dlp)) {
 	dlp->head = new;
   } else {
 	dlp->tail->next = new;
@@ -108,42 +107,39 @@ dl_append(const char *str, DLIST **dl)
 }
 
 static void
-ins_after(dl_node **src, dl_node **dst)
+ins_after(dl_node *src, dl_node *dst)
 {
-  dl_node *np = *src;
-  dl_node *new = *dst;
+  assert((src != NULL) &&
+		 (dst != NULL));
   
-  new->pre = np;
-  new->next = np->next;
-  if (np->next != NULL)
-	np->next->pre = new;
-  np->next = new;
+  dst->pre = src;
+  dst->next = src->next;
+  if (src->next != NULL)
+	src->next->pre = dst;
+  src->next = dst;
 }
 
 static void
-ins_before(dl_node **src, dl_node **dst)
+ins_before(dl_node *src, dl_node *dst)
 {
-  dl_node *np = *src;
-  dl_node *new = *dst;
+  assert((src != NULL) &&
+		 (dst != NULL));
   
-  new->next = np;
-  if (np->pre != NULL) {	
-	new->pre = np->pre;
-	np->pre->next = new;
+  dst->next = src;
+  if (src->pre != NULL) {	
+	dst->pre = src->pre;
+	src->pre->next = dst;
   }
-  np->pre = new;
+  src->pre = dst;
 }
 
 static int
-swap(dl_node **f, dl_node **r)
+swap(dl_node *front, dl_node *rear)
 {
-  dl_node *front = *f;
-  dl_node *rear = *r;
   dl_node *fp, *rn;
   
-  if (front == NULL ||
-	  rear == NULL)
-	return (-1);
+  assert((front != NULL) &&
+		 (rear != NULL));
 
   /* simple: we have only two nodes */
   /* to deal with. */
@@ -203,21 +199,17 @@ swap(dl_node **f, dl_node **r)
 }
 
 int
-dl_ins_at_pos(const char *str, int pos, DLIST **dl, const int before)
+dl_ins_at_pos(const char *str, int pos, DLIST *dlp, const int before)
 {
   int i;
   dl_node *new, *np;
-  DLIST *dlp = *dl;
   
-  if (str == NULL)
-	return (-1);
-
-  if (dlp == NULL)
-	return (-1);
+  assert((str != NULL) &&
+		 (dlp != NULL));
 	
   new = dl_mknode(str);
 	
-  if (dl_empty(&dlp)) {
+  if (dl_empty(dlp)) {
 	dlp->cur = dlp->head = dlp->tail = new;
 	dlp->len++;
   } else {
@@ -235,9 +227,9 @@ dl_ins_at_pos(const char *str, int pos, DLIST **dl, const int before)
 		np = np->next;
 
 	  if (before == 1)
-		ins_before(&np, &new);
+		ins_before(np, new);
 	  else
-		ins_after(&np, &new);
+		ins_after(np, new);
 	  
 	  dlp->len++;
 	}
@@ -254,21 +246,17 @@ dl_ins_at_pos(const char *str, int pos, DLIST **dl, const int before)
 }
 
 int
-dl_ins_at_val(const char *str, const char *pos, DLIST **dl, const int before)
+dl_ins_at_val(const char *str, const char *pos, DLIST *dlp, const int before)
 {
   dl_node *new, *np;
-  DLIST *dlp = *dl;
   
-  if ((str == NULL) ||
-	  (pos == NULL))
-	return (-1);
-
-  if (dlp == NULL)
-	return (-1);
+  assert((str != NULL) &&
+		 (pos != NULL) &&
+		 (dlp != NULL));
 
   dlp->cur = new = dl_mknode(str);
 	
-  if (dl_empty(&dlp)) {
+  if (dl_empty(dlp)) {
 	dlp->head = dlp->tail = new;
 	dlp->len++;
   } else {
@@ -276,11 +264,11 @@ dl_ins_at_val(const char *str, const char *pos, DLIST **dl, const int before)
 	while (np) {
 	  if (0 == strncmp(pos, np->ent, strlen(pos) + 1)) {
 		if (before == 1) {
-		  ins_before(&np, &new);
+		  ins_before(np, new);
 		  if (np == dlp->head)
 			dlp->head = new;
 		} else {
-		  ins_after(&np, &new);
+		  ins_after(np, new);
 		  if (np == dlp->tail)
 			dlp->tail = new;
 		}
@@ -295,17 +283,15 @@ dl_ins_at_val(const char *str, const char *pos, DLIST **dl, const int before)
 }
 
 void
-dl_sort(DLIST **dl)
+dl_sort(DLIST *dlp)
 {
   int m, ret;
   char *pre, *next;
   dl_node *front, *rear;
-  DLIST *dlp = *dl;
   
-  if (dlp == NULL)
-	return;
+  assert((dlp != NULL));
 
-  if (dl_empty(&dlp))
+  if (dl_empty(dlp))
 	return;
 
   if (dlp->tail == dlp->head &&
@@ -327,7 +313,7 @@ dl_sort(DLIST **dl)
 	  m = -1;
 
 	if (m > 0)
-	  ret = swap(&front, &rear);
+	  ret = swap(front, rear);
 	else
 	  ret = 1;
 
@@ -351,63 +337,45 @@ dl_sort(DLIST **dl)
 }
 
 int
-dl_delete(const char *str, DLIST **dl)
+dl_delete(const char *str, DLIST *dlp)
 {
-  DLIST *dlp = *dl;
+  assert((str != NULL) &&
+		 (dlp != NULL) &&
+		 !dl_empty(dlp));
   
-  if (str == NULL)
-	return (-1);
-
-  if (dlp == NULL)
-	return (-1);
-  
-  if (!dl_empty(&dlp)) {
-	dlp->cur = dlp->head;
-	while (dlp->cur) {
-	  if (0 == strncmp(str, dlp->cur->ent, strlen(str) + 1)) {
-		dlp->cur->deleted = 1;
-		dlp->len--;
-		return (0);
-	  }
-	  dlp->cur = dlp->cur->next;
+  dlp->cur = dlp->head;
+  while (dlp->cur) {
+	if (0 == strncmp(str, dlp->cur->ent, strlen(str) + 1)) {
+	  dlp->cur->deleted = 1;
+	  dlp->len--;
+	  return (0);
 	}
-	return (0);
+	dlp->cur = dlp->cur->next;
   }
-  return (-1);
+  return (0);
 }
 
 void
-dl_foreach(DLIST **dl, void (*func_p) (dl_node **np))
+dl_foreach(DLIST *dlp, void (*func_p) (dl_node *np))
 {
-  DLIST *dlp = *dl;
+  assert((dlp != NULL) &&
+		 (func_p != NULL) &&
+		 !dl_empty(dlp));
   
-  if (dlp == NULL)
-	return;
-
-  if (func_p == NULL)
-	return;
-
-  if (!dl_empty(&dlp)) {
-	dlp->cur = dlp->head;
-	while (dlp->cur) {
-	  func_p(&(dlp->cur));
-	  dlp->cur = dlp->cur->next;
-	}
+  dlp->cur = dlp->head;
+  while (dlp->cur) {
+	func_p(dlp->cur);
+	dlp->cur = dlp->cur->next;
   }
 }
 
 void
-dl_clear(DLIST **dl)
+dl_clear(DLIST *dlp)
 {
   dl_node *np;
-  DLIST *dlp;
 
-  dlp = *dl;
-
-  if (dlp == NULL)
-	return;
-  if (dl_empty(&dlp))
-	return;
+  assert((dlp != NULL) &&
+		 dl_empty(dlp));
 
   np = dlp->head;
   dlp->cur = dlp->head->next;
@@ -427,17 +395,11 @@ dl_clear(DLIST **dl)
 }
 
 void
-dl_free(DLIST **dl)
+dl_free(DLIST *dlp)
 {
   dl_node *np;
-  DLIST *dlp;
 
-  dlp = *dl;
-  
-  if (dlp == NULL)
-	return;
-  
-  if (dl_empty(&dlp)) {
+  if (dl_empty(dlp)) {
 	free(dlp);
 	dlp = NULL;
 	return;
@@ -453,7 +415,7 @@ dl_free(DLIST **dl)
 	if (dlp->cur != NULL)
 	  dlp->cur = dlp->cur->next;
   }
-
+  
   if (dlp != NULL) {
 	free(dlp);
 	dlp = NULL;

@@ -25,21 +25,23 @@
  *
  */
 
+#include <assert.h>
+
 #include "bstree.h"
 
-static bst_node *locate(const char *, bst_node **);
-static int insert(const char *, bst_node **, int);
-static void foreach(bst_node **, BST_TRV_ORDER, void (*) (bst_node **));
-static void mem_free(bst_node **);
+static bst_node *locate(const char *, bst_node *);
+static int insert(const char *, bst_node *, int);
+static void foreach(bst_node *, BST_TRV_ORDER, void (*) (bst_node *));
+static void mem_free(bst_node *);
 
 bst_node *
 bst_mknode(const char *str)
 {
   bst_node *np;
   
-  if (str == NULL)
-	return (NULL);
-  if (NULL == (np = (bst_node *)malloc(sizeof(bst_node))))
+  assert(str != NULL);
+  
+  if ((np = (bst_node *)malloc(sizeof(bst_node))) == NULL)
 	return (NULL);
 
   bzero(np->ent, BST_ENTSIZ);
@@ -64,12 +66,9 @@ bst_init(void)
 }
   
 int
-bst_empty(BSTREE **t)
+bst_empty(BSTREE *tp)
 {
-  BSTREE *tp = *t;
-  
-  if (tp == NULL)
-	return (1);
+  assert(tp != NULL);
   
   if (tp->root == NULL &&
 	  tp->size == 0)
@@ -79,32 +78,25 @@ bst_empty(BSTREE **t)
 }
 
 bst_node *
-bst_find(const char *str, BSTREE **t)
+bst_find(const char *str, BSTREE *tp)
 {
-  BSTREE *tp = *t;
+  assert((str != NULL) &&
+		 (tp != NULL) &&
+		 !bst_empty(tp));
   
-  if (str == NULL)
-	return (NULL);
-  if (tp == NULL)
-	return (NULL);
-  if (bst_empty(&tp))
-	return (NULL);
-  
-  return (locate(str, &(tp->root)));
+  return (locate(str, tp->root));
 }
 
 static bst_node *
-locate(const char *str, bst_node **n)
+locate(const char *str, bst_node *np)
 {
   int m;
-  bst_node *cur, *np;
-  
-  if (str == NULL)
-	return (NULL);
-  if (n == NULL)
-	return (NULL);
-  
-  cur = np = *n;
+  bst_node *cur;
+
+  assert((str != NULL) &&
+		 (np != NULL));
+
+  cur = np;
   
   if (np->deleted != 1) {
 	m = strncmp(str, np->ent, strlen(str) + 1);
@@ -114,14 +106,14 @@ locate(const char *str, bst_node **n)
 	
 	if (0 > m) {
 	  if (np->left != NULL)
-		cur = np = locate(str, &(np->left));
+		cur = np = locate(str, np->left);
 	  else
 		return (np);
 	}
 	  
 	if (0 < m) {
 	  if (np->right != NULL)
-		cur = np = locate(str, &(np->right));
+		cur = np = locate(str, np->right);
 	  else
 		return (np);
 	}
@@ -131,16 +123,12 @@ locate(const char *str, bst_node **n)
 }
 
 int
-bst_ins(const char *str, BSTREE **t, const int ic)
+bst_ins(const char *str, BSTREE *tp, const int ic)
 {
-  BSTREE *tp = *t;
+  assert((str != NULL) &&
+		 (tp != NULL));
   
-  if (str == NULL)
-	return (-1);
-  if (tp == NULL)
-	return (-1);
-
-  if (bst_empty(&tp)) {
+  if (bst_empty(tp)) {
 
 	if ((tp->root = bst_mknode(str)) == NULL)
 	  return (-1);
@@ -149,7 +137,7 @@ bst_ins(const char *str, BSTREE **t, const int ic)
 	return (0);
   }
   
-  if (0 == insert(str, &(tp->root), ic)) {
+  if (0 == insert(str, tp->root, ic)) {
 	tp->size++;
 	return (0);
   }
@@ -158,19 +146,16 @@ bst_ins(const char *str, BSTREE **t, const int ic)
 }
 
 static int
-insert(const char *str, bst_node **src, const int ic)
+insert(const char *str, bst_node *pos, const int ic)
 {
   int m, ret;
   bst_node *np;
-  bst_node *pos = *src;
 
-  if (str == NULL)
-	return (-1);
-  if (pos == NULL)
-	return (-1);
+  assert((str != NULL) &&
+		 (pos != NULL));
 
   ret = -1;
-  np = locate(str, &(pos));
+  np = locate(str, pos);
   m = strncmp(str, np->ent, strlen(str) + 1);
 
   if (ic == 1 && m == 0) {
@@ -178,7 +163,7 @@ insert(const char *str, bst_node **src, const int ic)
 	  if (NULL != (np->left = bst_mknode(str)))
 		ret = 0;
 	} else {
-	  ret = insert(str, &(np->left), ic);
+	  ret = insert(str, np->left, ic);
 	}
   }
 
@@ -187,7 +172,7 @@ insert(const char *str, bst_node **src, const int ic)
 	  if (NULL != (np->left = bst_mknode(str)))
 		ret = 0;
 	} else {
-	  ret = insert(str, &(np->left), ic);
+	  ret = insert(str, np->left, ic);
 	}
   }
 	
@@ -196,7 +181,7 @@ insert(const char *str, bst_node **src, const int ic)
 	  if (NULL != (np->right = bst_mknode(str)))
 		ret = 0;
 	} else {
-	  ret = insert(str, &(np->right), ic);
+	  ret = insert(str, np->right, ic);
 	}
   }
 
@@ -204,17 +189,14 @@ insert(const char *str, bst_node **src, const int ic)
 }
 
 int
-bst_del(const char *str, BSTREE **t)
+bst_del(const char *str, BSTREE *tp)
 {
   bst_node *np;
-  BSTREE *tp = *t;
 
-  if (str == NULL)
-	return (-1);
-  if (tp == NULL)
-	return (-1);
+  assert((str != NULL) &&
+		 (tp != NULL));
   
-  np = locate(str, &(tp->root));
+  np = locate(str, tp->root);
 
   if (np != NULL) {
 	np->deleted = 1;
@@ -226,84 +208,68 @@ bst_del(const char *str, BSTREE **t)
 }
 
 void
-bst_free(BSTREE **tp)
+bst_free(BSTREE *tp)
 {
-  BSTREE *p;
-
-  p = *tp;
-  if (p == NULL)
-	return;
-  
-  mem_free(&(p->root));
-  if (p != NULL) {
-	free(p);
-	p = NULL;
+  assert(tp != NULL);
+   
+  mem_free(tp->root);
+  if (tp != NULL) {
+	free(tp);
+	tp = NULL;
   }
 }
 
 static void
-mem_free(bst_node **np)
+mem_free(bst_node *np)
 {
-  bst_node *p;
-
-  p = *np;
-  if (p == NULL)
-	return;
+  assert(np != NULL);
   
-  if (p->left != NULL)
-	mem_free(&(p->left));
-  if (p->right != NULL)
-	mem_free(&(p->right));
+  if (np->left != NULL)
+	mem_free(np->left);
+  if (np->right != NULL)
+	mem_free(np->right);
 
-  free(p);
-  p = NULL;
+  free(np);
+  np = NULL;
 }
 
 void
-bst_foreach(BSTREE **t, BST_TRV_ORDER odr, void (*func_p) (bst_node **node))
+bst_foreach(BSTREE *tp, BST_TRV_ORDER odr, void (*func_p) (bst_node *node))
 {
-  BSTREE *tp = *t;
+  assert((tp != NULL) &&
+		 (func_p != NULL));
   
-  if (tp == NULL)
-	return;
-  if (func_p == NULL)
-	return;
-  
-  foreach(&(tp->root), odr, func_p);
+  foreach(tp->root, odr, func_p);
 }
 
 static void
-foreach(bst_node **beg, BST_TRV_ORDER odr, void (*func_p) (bst_node **node))
+foreach(bst_node *beg, BST_TRV_ORDER odr, void (*func_p) (bst_node *node))
 {
-    bst_node *np = *beg;
-
-	if (beg == NULL)
-	  return;
-	if (func_p == NULL)
-	  return;
+	assert((beg != NULL) &&
+		   (func_p != NULL));
 	
 	switch (odr) {
 	case BST_PREORDER:
-	  func_p(&np);
-	  if (np->left != NULL)
-		foreach(&(np->left), BST_PREORDER, func_p);
-	  if (np->right != NULL)
-		foreach(&(np->right), BST_PREORDER, func_p);
+	  func_p(beg);
+	  if (beg->left != NULL)
+		foreach(beg->left, BST_PREORDER, func_p);
+	  if (beg->right != NULL)
+		foreach(beg->right, BST_PREORDER, func_p);
 	  break;
 	case BST_INORDER:
-	  if (np->left != NULL)
-		foreach(&(np->left), BST_INORDER, func_p);
-	  func_p(&np);
-	  if (np->right != NULL)
-		foreach(&(np->right), BST_INORDER, func_p);
+	  if (beg->left != NULL)
+		foreach(beg->left, BST_INORDER, func_p);
+	  func_p(beg);
+	  if (beg->right != NULL)
+		foreach(beg->right, BST_INORDER, func_p);
 	  break;
 	default:
 	case BST_POSTORDER:
-	  if (np->left != NULL)
-		foreach(&(np->left), BST_POSTORDER, func_p);
-	  if (np->right != NULL)
-		foreach(&(np->right), BST_POSTORDER, func_p);
-	  func_p(&np);
+	  if (beg->left != NULL)
+		foreach(beg->left, BST_POSTORDER, func_p);
+	  if (beg->right != NULL)
+		foreach(beg->right, BST_POSTORDER, func_p);
+	  func_p(beg);
 	  break;
 	}
 }

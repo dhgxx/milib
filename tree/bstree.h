@@ -54,12 +54,12 @@ typedef struct _bstree {
 
 bst_node *bst_mknode(const char *);
 BSTREE *bst_init(void);
-int bst_empty(BSTREE **);
-bst_node *bst_find(const char *, BSTREE **);
-int bst_ins(const char *, BSTREE **, const int);
-int bst_del(const char *, BSTREE **);
+int bst_empty(BSTREE *);
+bst_node *bst_find(const char *, BSTREE *);
+int bst_ins(const char *, BSTREE *, const int);
+int bst_del(const char *, BSTREE *);
 
-void bst_free(BSTREE **);
-void bst_foreach(BSTREE **, BST_TRV_ORDER, void (*) (bst_node **));
+void bst_free(BSTREE *);
+void bst_foreach(BSTREE *, BST_TRV_ORDER, void (*) (bst_node *));
 
 #endif /* _BSTREE_H_ */
