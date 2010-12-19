@@ -37,9 +37,8 @@ dl_node *
 dl_mknode(const char *str)
 {
   dl_node *np;
-  
-  if (str == NULL)
-	return (NULL);
+
+  assert(str != NULL);
   
   if ((np = (dl_node *)malloc(sizeof(dl_node))) == NULL)
 	return (NULL);
@@ -308,7 +307,7 @@ dl_sort(DLIST *dlp)
 	next = rear->ent;
 
 	if (pre != NULL && next != NULL)
-	  m = strncmp(pre, next, strlen(next) + 1);
+	  m = strncmp(pre, next, strlen(pre) + 1);
 	else
 	  m = -1;
 
