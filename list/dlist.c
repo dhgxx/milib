@@ -318,7 +318,7 @@ dl_sort(DLIST *dlp)
 
 	if (ret == 0) {
 #ifdef _DEBUG_
-	  fprintf(stderr, "swaping %s and %s\n", pre, next);
+	  (void)fprintf(stderr, "swaping %s and %s\n", pre, next);
 #endif
 	  if (dlp->tail == rear)
 		dlp->tail = front;

@@ -6,7 +6,7 @@ SRCS=		bstree.c dlist.c stack.c tree.c
 INCS=		bstree.h dlist.h stack.h tree.h
 
 SHLIB_MAJOR=	1
-SHLIB_MINOR=	0
+SHLIB_MINOR=	1
 
 .PATH:		${.CURDIR}/tree ${.CURDIR}/list ${.CURDIR}/stack
 INCSDIR=	/opt/local/include
@@ -17,6 +17,10 @@ NO_OBJ=		true
 
 .if !defined(NOOBJ)
 NOOBJ=		${NO_OBJ}
+.endif
+
+.if exists(/usr/bin/clang)
+CC=			clang
 .endif
 
 LDCONFIG=	/sbin/ldconfig
