@@ -6,7 +6,7 @@ HDRS=		${.CURDIR}/{tree/bstree.h,tree/tree.h,list/dlist.h,stack/stack.h}
 SRCS=		bstree.c dlist.c stack.c tree.c
 
 SHLIB_MAJOR=	1
-SHLIB_MINOR=	0
+SHLIB_MINOR=	1
 
 .PATH:		${.CURDIR}/tree ${.CURDIR}/list ${.CURDIR}/stack
 LIBDIR=		/opt/local/lib
