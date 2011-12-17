@@ -32,7 +32,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef MAXNAMLEN
+#define DL_ENTSIZ MAXNAMLEN
+#else
 #define DL_ENTSIZ 256
+#endif
 
 typedef struct _dl_node {
   char ent[DL_ENTSIZ];
