@@ -32,7 +32,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TR_ENTSIZ 256
+#ifdef MAXNAMLEN
+#define ST_ENTSIZ MAXNAMLEN
+#else
+#define ST_ENTSIZ 256
+#endif
 
 typedef struct _tr_node_t {
   char ent[TR_ENTSIZ];

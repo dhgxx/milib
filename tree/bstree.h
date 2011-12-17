@@ -32,7 +32,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef MAXNAMLEN
+#define BST_ENTSIZ MAXNAMLEN
+#else
 #define BST_ENTSIZ 256
+#endif
 
 typedef enum _bst_traverse_order {
   BST_POSTORDER,
