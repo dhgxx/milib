@@ -29,12 +29,13 @@
 
 #include "dlist.h"
 
+static dl_node *mknode(const char *str);
 static void ins_after(dl_node *, dl_node *);
 static void ins_before(dl_node *, dl_node *);
 static int swap(dl_node *, dl_node *);
 
-dl_node *
-dl_mknode(const char *str)
+static dl_node *
+mknode(const char *str)
 {
   dl_node *np;
 
@@ -90,7 +91,7 @@ dl_append(const char *str, DLIST *dlp)
   if (dlp == NULL)
 	return (-1);
 
-  new = dl_mknode(str);
+  new = mknode(str);
 
   if (dl_empty(dlp)) {
 	dlp->head = new;
@@ -206,7 +207,7 @@ dl_ins_at_pos(const char *str, int pos, DLIST *dlp, const int before)
   assert((str != NULL) &&
 		 (dlp != NULL));
 	
-  new = dl_mknode(str);
+  new = mknode(str);
 	
   if (dl_empty(dlp)) {
 	dlp->cur = dlp->head = dlp->tail = new;
@@ -253,7 +254,7 @@ dl_ins_at_val(const char *str, const char *pos, DLIST *dlp, const int before)
 		 (pos != NULL) &&
 		 (dlp != NULL));
 
-  dlp->cur = new = dl_mknode(str);
+  dlp->cur = new = mknode(str);
 	
   if (dl_empty(dlp)) {
 	dlp->head = dlp->tail = new;
@@ -279,6 +280,34 @@ dl_ins_at_val(const char *str, const char *pos, DLIST *dlp, const int before)
 	}
   }
   return (0);
+}
+
+dl_node *
+dl_behead(DLIST *dlp)
+{
+  dl_node *np;
+
+  assert((dlp != NULL));
+
+  if (dl_empty(dlp))
+	return NULL;
+
+  if (dlp->head == dlp->tail) {
+	np = mknode(dlp->head->ent);
+	free(dlp->head);
+	dlp->cur = NULL;
+	dlp->head = dlp->tail = NULL;
+	dlp->len = 0;
+	return np;
+  }
+
+  np = dlp->head;
+  dlp->head = np->next;
+  np->next = NULL;
+  dlp->head->pre = NULL;
+  dlp->len--;
+
+  return np;
 }
 
 void
@@ -339,8 +368,10 @@ int
 dl_delete(const char *str, DLIST *dlp)
 {
   assert((str != NULL) &&
-		 (dlp != NULL) &&
-		 !dl_empty(dlp));
+		 (dlp != NULL));
+
+  if(dl_empty(dlp))
+	return (0);
   
   dlp->cur = dlp->head;
   while (dlp->cur) {
@@ -358,8 +389,10 @@ void
 dl_foreach(DLIST *dlp, void (*func_p) (dl_node *np))
 {
   assert((dlp != NULL) &&
-		 (func_p != NULL) &&
-		 !dl_empty(dlp));
+		 (func_p != NULL));
+
+  if (dl_empty(dlp))
+	return;
   
   dlp->cur = dlp->head;
   while (dlp->cur) {
@@ -373,8 +406,10 @@ dl_clear(DLIST *dlp)
 {
   dl_node *np;
 
-  assert((dlp != NULL) &&
-		 dl_empty(dlp));
+  assert((dlp != NULL));
+
+  if (dl_empty(dlp))
+	return;
 
   np = dlp->head;
   dlp->cur = dlp->head->next;

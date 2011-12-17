@@ -9,18 +9,19 @@ SHLIB_MAJOR=	1
 SHLIB_MINOR=	1
 
 .PATH:		${.CURDIR}/tree ${.CURDIR}/list ${.CURDIR}/stack
-INCSDIR=	/opt/local/include
+INCSDIR=	/opt/local/include/mi
 LIBDIR=		/opt/local/lib
 
 WARNS?=		2
 NO_OBJ=		true
+NO_PROFILE=	true
 
-.if !defined(NOOBJ)
-NOOBJ=		${NO_OBJ}
-.endif
+NOOBJ?=		${NO_OBJ}
+NOPROFILE?=	${NO_PROFILE}
 
 .if exists(/usr/bin/clang)
 CC=			clang
+CFLAGS=		-O2 -pipe
 .endif
 
 LDCONFIG=	/sbin/ldconfig

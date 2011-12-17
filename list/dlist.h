@@ -48,12 +48,12 @@ typedef struct _dlist {
   unsigned int len;
 } DLIST;
 
-dl_node *dl_mknode(const char *);
 DLIST *dl_init(void);
 int dl_empty(DLIST *);
 int dl_append(const char *, DLIST *);
 int dl_ins_at_pos(const char *, const int, DLIST *, const int);
 int dl_ins_at_val(const char *, const char *, DLIST *, const int);
+dl_node *dl_behead(DLIST *);
 void dl_sort(DLIST *);
 int dl_delete(const char *, DLIST *);
 void dl_foreach(DLIST *, void (*) (dl_node *));

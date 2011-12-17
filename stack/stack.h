@@ -34,7 +34,11 @@
 
 
 /*A string stack implementation*/
+#ifdef MAXNAMLEN
+#define ST_ENTSIZ MAXNAMLEN
+#else
 #define ST_ENTSIZ 256
+#endif
 
 typedef struct _st_node {
   char ent[ST_ENTSIZ];
