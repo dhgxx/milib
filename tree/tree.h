@@ -33,9 +33,9 @@
 #include <string.h>
 
 #ifdef MAXNAMLEN
-#define ST_ENTSIZ MAXNAMLEN
+#define TR_ENTSIZ MAXNAMLEN
 #else
-#define ST_ENTSIZ 256
+#define TR_ENTSIZ 256
 #endif
 
 typedef struct _tr_node_t {
