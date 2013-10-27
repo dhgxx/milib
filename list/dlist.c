@@ -29,19 +29,19 @@
 
 #include "dlist.h"
 
-static dl_node *mknode(const char *str);
-static void ins_after(dl_node *, dl_node *);
-static void ins_before(dl_node *, dl_node *);
-static int swap(dl_node *, dl_node *);
+static struct dl_node *mknode(const char *str);
+static void ins_after(struct dl_node *, struct dl_node *);
+static void ins_before(struct dl_node *, struct dl_node *);
+static int swap(struct dl_node *, struct dl_node *);
 
-static dl_node *
+static struct dl_node *
 mknode(const char *str)
 {
-  dl_node *np;
+  struct dl_node *np;
 
   assert(str != NULL);
   
-  if ((np = (dl_node *)malloc(sizeof(dl_node))) == NULL)
+  if ((np = (struct dl_node *)malloc(sizeof(struct dl_node))) == NULL)
 	return (NULL);
   
   bzero(np->ent, DL_ENTSIZ);
@@ -52,12 +52,12 @@ mknode(const char *str)
   return (np);
 }
 
-DLIST *
+struct dlist *
 dl_init(void)
 {
-  DLIST *dl;
+  struct dlist *dl;
   
-  if ((dl = (DLIST *)malloc(sizeof(DLIST))) == NULL)
+  if ((dl = (struct dlist *)malloc(sizeof(struct dlist))) == NULL)
 	return (NULL);
   
   dl->head = NULL;
@@ -68,7 +68,7 @@ dl_init(void)
 }
 
 int
-dl_empty(DLIST *dlp)
+dl_empty(struct dlist *dlp)
 {  
   if (dlp == NULL)
 	return (1);
@@ -84,9 +84,9 @@ dl_empty(DLIST *dlp)
 }
 
 int
-dl_append(const char *str, DLIST *dlp)
+dl_append(const char *str, struct dlist *dlp)
 {
-  dl_node *new;
+  struct dl_node *new;
   
   if (dlp == NULL)
 	return (-1);
@@ -107,7 +107,7 @@ dl_append(const char *str, DLIST *dlp)
 }
 
 static void
-ins_after(dl_node *src, dl_node *dst)
+ins_after(struct dl_node *src, struct dl_node *dst)
 {
   assert((src != NULL) &&
 		 (dst != NULL));
@@ -120,7 +120,7 @@ ins_after(dl_node *src, dl_node *dst)
 }
 
 static void
-ins_before(dl_node *src, dl_node *dst)
+ins_before(struct dl_node *src, struct dl_node *dst)
 {
   assert((src != NULL) &&
 		 (dst != NULL));
@@ -134,9 +134,9 @@ ins_before(dl_node *src, dl_node *dst)
 }
 
 static int
-swap(dl_node *front, dl_node *rear)
+swap(struct dl_node *front, struct dl_node *rear)
 {
-  dl_node *fp, *rn;
+  struct dl_node *fp, *rn;
   
   assert((front != NULL) &&
 		 (rear != NULL));
@@ -199,10 +199,10 @@ swap(dl_node *front, dl_node *rear)
 }
 
 int
-dl_ins_at_pos(const char *str, int pos, DLIST *dlp, const int before)
+dl_ins_at_pos(const char *str, int pos, struct dlist *dlp, const int before)
 {
   int i;
-  dl_node *new, *np;
+  struct dl_node *new, *np;
   
   assert((str != NULL) &&
 		 (dlp != NULL));
@@ -246,9 +246,9 @@ dl_ins_at_pos(const char *str, int pos, DLIST *dlp, const int before)
 }
 
 int
-dl_ins_at_val(const char *str, const char *pos, DLIST *dlp, const int before)
+dl_ins_at_val(const char *str, const char *pos, struct dlist *dlp, const int before)
 {
-  dl_node *new, *np;
+  struct dl_node *new, *np;
   
   assert((str != NULL) &&
 		 (pos != NULL) &&
@@ -282,10 +282,10 @@ dl_ins_at_val(const char *str, const char *pos, DLIST *dlp, const int before)
   return (0);
 }
 
-dl_node *
-dl_behead(DLIST *dlp)
+struct dl_node *
+dl_behead(struct dlist *dlp)
 {
-  dl_node *np;
+  struct dl_node *np;
 
   assert((dlp != NULL));
 
@@ -311,11 +311,11 @@ dl_behead(DLIST *dlp)
 }
 
 void
-dl_sort(DLIST *dlp)
+dl_sort(struct dlist *dlp)
 {
   int m, ret;
   char *pre, *next;
-  dl_node *front, *rear;
+  struct dl_node *front, *rear;
   
   assert((dlp != NULL));
 
@@ -365,7 +365,7 @@ dl_sort(DLIST *dlp)
 }
 
 int
-dl_delete(const char *str, DLIST *dlp)
+dl_delete(const char *str, struct dlist *dlp)
 {
   assert((str != NULL) &&
 		 (dlp != NULL));
@@ -386,7 +386,7 @@ dl_delete(const char *str, DLIST *dlp)
 }
 
 void
-dl_foreach(DLIST *dlp, void (*func_p) (dl_node *np))
+dl_foreach(struct dlist *dlp, void (*func_p) (struct dl_node *np))
 {
   assert((dlp != NULL) &&
 		 (func_p != NULL));
@@ -402,9 +402,9 @@ dl_foreach(DLIST *dlp, void (*func_p) (dl_node *np))
 }
 
 void
-dl_clear(DLIST *dlp)
+dl_clear(struct dlist *dlp)
 {
-  dl_node *np;
+  struct dl_node *np;
 
   assert((dlp != NULL));
 
@@ -429,9 +429,9 @@ dl_clear(DLIST *dlp)
 }
 
 void
-dl_free(DLIST *dlp)
+dl_free(struct dlist *dlp)
 {
-  dl_node *np;
+  struct dl_node *np;
 
   if (dl_empty(dlp)) {
 	free(dlp);

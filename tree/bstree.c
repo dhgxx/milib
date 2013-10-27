@@ -29,19 +29,19 @@
 
 #include "bstree.h"
 
-static bst_node *locate(const char *, bst_node *);
-static int insert(const char *, bst_node *, int);
-static void foreach(bst_node *, BST_TRV_ORDER, void (*) (bst_node *));
-static void mem_free(bst_node *);
+static struct bst_node *locate(const char *, struct bst_node *);
+static int insert(const char *, struct bst_node *, int);
+static void foreach(struct bst_node *, enum bst_trv_order, void (*) (struct bst_node *));
+static void mem_free(struct bst_node *);
 
-bst_node *
+struct bst_node *
 bst_mknode(const char *str)
 {
-  bst_node *np;
+  struct bst_node *np;
   
   assert(str != NULL);
   
-  if ((np = (bst_node *)malloc(sizeof(bst_node))) == NULL)
+  if ((np = (struct bst_node *)malloc(sizeof(struct bst_node))) == NULL)
 	return (NULL);
 
   bzero(np->ent, BST_ENTSIZ);
@@ -52,12 +52,12 @@ bst_mknode(const char *str)
   return (np);
 }
 
-BSTREE *
+struct bstree *
 bst_init(void)
 {
-  BSTREE *tp;
+  struct bstree *tp;
 			  
-  if (NULL == (tp = (BSTREE *)malloc(sizeof(BSTREE))))
+  if (NULL == (tp = (struct bstree *)malloc(sizeof(struct bstree))))
 	return (NULL);
   
   tp->root = NULL;
@@ -66,7 +66,7 @@ bst_init(void)
 }
   
 int
-bst_empty(BSTREE *tp)
+bst_empty(struct bstree *tp)
 {
   assert(tp != NULL);
   
@@ -77,8 +77,8 @@ bst_empty(BSTREE *tp)
   return (0);
 }
 
-bst_node *
-bst_find(const char *str, BSTREE *tp)
+struct bst_node *
+bst_find(const char *str, struct bstree *tp)
 {
   assert((str != NULL) &&
 		 (tp != NULL) &&
@@ -87,11 +87,11 @@ bst_find(const char *str, BSTREE *tp)
   return (locate(str, tp->root));
 }
 
-static bst_node *
-locate(const char *str, bst_node *np)
+static struct bst_node *
+locate(const char *str, struct bst_node *np)
 {
   int m;
-  bst_node *cur;
+  struct bst_node *cur;
 
   assert((str != NULL) &&
 		 (np != NULL));
@@ -123,7 +123,7 @@ locate(const char *str, bst_node *np)
 }
 
 int
-bst_ins(const char *str, BSTREE *tp, const int ic)
+bst_ins(const char *str, struct bstree *tp, const int ic)
 {
   assert((str != NULL) &&
 		 (tp != NULL));
@@ -146,10 +146,10 @@ bst_ins(const char *str, BSTREE *tp, const int ic)
 }
 
 static int
-insert(const char *str, bst_node *pos, const int ic)
+insert(const char *str, struct bst_node *pos, const int ic)
 {
   int m, ret;
-  bst_node *np;
+  struct bst_node *np;
 
   assert((str != NULL) &&
 		 (pos != NULL));
@@ -189,9 +189,9 @@ insert(const char *str, bst_node *pos, const int ic)
 }
 
 int
-bst_del(const char *str, BSTREE *tp)
+bst_del(const char *str, struct bstree *tp)
 {
-  bst_node *np;
+  struct bst_node *np;
 
   assert((str != NULL) &&
 		 (tp != NULL));
@@ -208,7 +208,7 @@ bst_del(const char *str, BSTREE *tp)
 }
 
 void
-bst_free(BSTREE *tp)
+bst_free(struct bstree *tp)
 {
   assert(tp != NULL);
    
@@ -220,7 +220,7 @@ bst_free(BSTREE *tp)
 }
 
 static void
-mem_free(bst_node *np)
+mem_free(struct bst_node *np)
 {
   assert(np != NULL);
   
@@ -234,7 +234,7 @@ mem_free(bst_node *np)
 }
 
 void
-bst_foreach(BSTREE *tp, BST_TRV_ORDER odr, void (*func_p) (bst_node *node))
+bst_foreach(struct bstree *tp, enum bst_trv_order odr, void (*func_p) (struct bst_node *node))
 {
   assert((tp != NULL) &&
 		 (func_p != NULL));
@@ -243,7 +243,7 @@ bst_foreach(BSTREE *tp, BST_TRV_ORDER odr, void (*func_p) (bst_node *node))
 }
 
 static void
-foreach(bst_node *beg, BST_TRV_ORDER odr, void (*func_p) (bst_node *node))
+foreach(struct bst_node *beg, enum bst_trv_order odr, void (*func_p) (struct bst_node *node))
 {
 	assert((beg != NULL) &&
 		   (func_p != NULL));

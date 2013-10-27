@@ -29,12 +29,12 @@
 
 #include "stack.h"
 
-STACK *
+struct stack *
 st_init(void)
 {
-  STACK *st;
+  struct stack *st;
   
-  if ((st = (STACK *)malloc(sizeof(STACK))) == NULL)
+  if ((st = (struct stack *)malloc(sizeof(struct stack))) == NULL)
 	return (NULL);
 
   st->top = NULL;
@@ -43,7 +43,7 @@ st_init(void)
 }
 
 int
-st_empty(STACK *stp)
+st_empty(struct stack *stp)
 {  
   if (stp == NULL)
 	return (1);
@@ -55,14 +55,14 @@ st_empty(STACK *stp)
   return (0);
 }
 
-st_node *
+struct st_node *
 st_mknode(const char *str)
 {
-  st_node  *np;
+  struct st_node  *np;
 
   assert(str != NULL);
 
-  if ((np = (st_node *)malloc(sizeof(st_node))) == NULL)
+  if ((np = (struct st_node *)malloc(sizeof(struct st_node))) == NULL)
 	return (NULL);
 
   bzero(np->ent, ST_ENTSIZ);
@@ -72,9 +72,9 @@ st_mknode(const char *str)
 }
 
 int
-st_push(const char *str, STACK *stp)
+st_push(const char *str, struct stack *stp)
 {
-  st_node  *np;
+  struct st_node  *np;
   
   assert((str != NULL) &&
 		 (stp != NULL));
@@ -91,10 +91,10 @@ st_push(const char *str, STACK *stp)
   return (-1);
 }
 
-st_node *
-st_pop(STACK *stp)
+struct st_node *
+st_pop(struct stack *stp)
 {
-  st_node *np;
+  struct st_node *np;
 
   assert(stp != NULL);
   
@@ -109,9 +109,9 @@ st_pop(STACK *stp)
 }
 
 void
-st_free(STACK *stp)
+st_free(struct stack *stp)
 {
-  st_node *np;
+  struct st_node *np;
 
   assert(stp != NULL);
 
@@ -136,9 +136,9 @@ st_free(STACK *stp)
 }
 
 void
-st_foreach(STACK *stp, void (*func_p) (st_node *np))  
+st_foreach(struct stack *stp, void (*func_p) (struct st_node *np))  
 {
-  st_node *np;
+  struct st_node *np;
   
   assert((stp != NULL) &&
 		 (func_p != NULL) &&

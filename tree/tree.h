@@ -38,27 +38,27 @@
 #define TR_ENTSIZ 256
 #endif
 
-typedef struct _tr_node_t {
+struct tr_node {
   char ent[TR_ENTSIZ];
-  struct _tr_node_t *sbl;
-  struct _tr_node_t *eld;
-  struct _tr_node_t *prt;
-  struct _tr_node_t *cld;
-} tr_node;
+  struct tr_node *sbl;
+  struct tr_node *eld;
+  struct tr_node *prt;
+  struct tr_node *cld;
+};
 
-typedef struct _tree {
-  tr_node *root;
-  tr_node *cur;
+struct tree {
+  struct tr_node *root;
+  struct tr_node *cur;
   unsigned int size;
-} TREE;
+};
 
-tr_node *tr_mknode(const char *);
-TREE *tr_init(void);
-int tr_empty(TREE *);
-void tr_free(TREE *);
-tr_node *tr_find(const char *, TREE *);
-int tr_add_sbl(const char *, const char *, TREE *);
-int tr_add_cld(const char *, const char *, TREE *);
-void tr_foreach(TREE *, void (*) (tr_node *));
+struct tr_node *tr_mknode(const char *);
+struct tree *tr_init(void);
+int tr_empty(struct tree *);
+void tr_free(struct tree *);
+struct tr_node *tr_find(const char *, struct tree *);
+int tr_add_sbl(const char *, const char *, struct tree *);
+int tr_add_cld(const char *, const char *, struct tree *);
+void tr_foreach(struct tree *, void (*) (struct tr_node *));
 
 #endif /* _TREE_H_ */

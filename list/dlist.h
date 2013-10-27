@@ -25,8 +25,8 @@
  *
  */
 
-#ifndef _DLIST_H_
-#define _DLIST_H_
+#ifndef dlist_H_
+#define dlist_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,30 +38,30 @@
 #define DL_ENTSIZ 256
 #endif
 
-typedef struct _dl_node {
+struct dl_node {
   char ent[DL_ENTSIZ];
-  struct _dl_node *pre;
-  struct _dl_node *next;
+  struct dl_node *pre;
+  struct dl_node *next;
   unsigned int deleted;
-} dl_node;
+};
 
-typedef struct _dlist {
-  dl_node *head;
-  dl_node *tail;
-  dl_node *cur;
+struct dlist {
+  struct dl_node *head;
+  struct dl_node *tail;
+  struct dl_node *cur;
   unsigned int len;
-} DLIST;
+};
 
-DLIST *dl_init(void);
-int dl_empty(DLIST *);
-int dl_append(const char *, DLIST *);
-int dl_ins_at_pos(const char *, const int, DLIST *, const int);
-int dl_ins_at_val(const char *, const char *, DLIST *, const int);
-dl_node *dl_behead(DLIST *);
-void dl_sort(DLIST *);
-int dl_delete(const char *, DLIST *);
-void dl_foreach(DLIST *, void (*) (dl_node *));
-void dl_clear(DLIST *);
-void dl_free(DLIST *);
+struct dlist *dl_init(void);
+int dl_empty(struct dlist *);
+int dl_append(const char *, struct dlist *);
+int dl_ins_at_pos(const char *, const int, struct dlist *, const int);
+int dl_ins_at_val(const char *, const char *, struct dlist *, const int);
+struct dl_node *dl_behead(struct dlist *);
+void dl_sort(struct dlist *);
+int dl_delete(const char *, struct dlist *);
+void dl_foreach(struct dlist *, void (*) (struct dl_node *));
+void dl_clear(struct dlist *);
+void dl_free(struct dlist *);
 
-#endif /* _DLIST_H_ */
+#endif /* _struct dlist_H_ */

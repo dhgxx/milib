@@ -29,18 +29,18 @@
 
 #include "tree.h"
 
-static void foreach(tr_node *, void (*) (tr_node *));
-static tr_node *locate(const char *, tr_node *);
-static void mem_free(tr_node *);
+static void foreach(struct tr_node *, void (*) (struct tr_node *));
+static struct tr_node *locate(const char *, struct tr_node *);
+static void mem_free(struct tr_node *);
 
-tr_node *
+struct tr_node *
 tr_mknode(const char *str)
 {
-  tr_node *np;
+  struct tr_node *np;
   
   assert(str != NULL);
 
-  np = (tr_node *)malloc(sizeof(tr_node));
+  np = (struct tr_node *)malloc(sizeof(struct tr_node));
 
   if (np != NULL) {
 	bzero(np->ent, TR_ENTSIZ);
@@ -54,12 +54,12 @@ tr_mknode(const char *str)
   return (np);
 }
 
-TREE *
+struct tree *
 tr_init(void)
 {
-  TREE *tp;
+  struct tree *tp;
 
-  tp = (TREE *)malloc(sizeof(TREE));
+  tp = (struct tree *)malloc(sizeof(struct tree));
 
   if (tp != NULL) {
 	tp->root = NULL;
@@ -70,7 +70,7 @@ tr_init(void)
 }
 
 int
-tr_empty(TREE *tp)
+tr_empty(struct tree *tp)
 {
   assert(tp != NULL);
 
@@ -82,7 +82,7 @@ tr_empty(TREE *tp)
 }
 
 void
-tr_free(TREE *tp)
+tr_free(struct tree *tp)
 {
   assert(tp != NULL);
 
@@ -103,10 +103,10 @@ tr_free(TREE *tp)
   }
 }
 
-tr_node *
-tr_find(const char *str, TREE *tp)
+struct tr_node *
+tr_find(const char *str, struct tree *tp)
 {
-  tr_node *np;
+  struct tr_node *np;
   
   assert((str != NULL) &&
 		 (tp != NULL) &&
@@ -116,7 +116,7 @@ tr_find(const char *str, TREE *tp)
 }
 
 void
-tr_foreach(TREE *tp, void (*func_p)(tr_node *np))
+tr_foreach(struct tree *tp, void (*func_p)(struct tr_node *np))
 {
   assert((tp != NULL) &&
 		 (func_p != NULL) &&
@@ -126,7 +126,7 @@ tr_foreach(TREE *tp, void (*func_p)(tr_node *np))
 }
 
 static void
-foreach(tr_node *np, void (*func_p) (tr_node *node))
+foreach(struct tr_node *np, void (*func_p) (struct tr_node *node))
 {  
   if (np == NULL)
 	return;
@@ -144,8 +144,8 @@ foreach(tr_node *np, void (*func_p) (tr_node *node))
 	foreach(np->cld, func_p);
 }
 
-static tr_node *
-locate(const char *str, tr_node *np)
+static struct tr_node *
+locate(const char *str, struct tr_node *np)
 {
   assert((str != NULL) &&
 		 (np != NULL) &&
@@ -163,9 +163,9 @@ locate(const char *str, tr_node *np)
 }
 
 int
-tr_add_sbl(const char *str, const char *src, TREE *tp)
+tr_add_sbl(const char *str, const char *src, struct tree *tp)
 {
-  tr_node *np;
+  struct tr_node *np;
   
   assert((str != NULL) &&
 		 (src != NULL) &&
@@ -190,9 +190,9 @@ tr_add_sbl(const char *str, const char *src, TREE *tp)
 }
 
 int
-tr_add_cld(const char *str, const char *src, TREE *tp)
+tr_add_cld(const char *str, const char *src, struct tree *tp)
 {
-  tr_node *np;
+  struct tr_node *np;
 
   assert((str != NULL) &&
 		 (src != NULL) &&
@@ -225,7 +225,7 @@ tr_add_cld(const char *str, const char *src, TREE *tp)
 }
   
 static void
-mem_free(tr_node *np)
+mem_free(struct tr_node *np)
 {
   if (np == NULL)
 	return;

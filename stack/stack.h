@@ -40,23 +40,23 @@
 #define ST_ENTSIZ 256
 #endif
 
-typedef struct _st_node {
+struct st_node {
   char ent[ST_ENTSIZ];
-  struct _st_node *next;
-} st_node;
+  struct st_node *next;
+};
 
-typedef struct _stack {
-  st_node *top;
+struct stack {
+  struct st_node *top;
   unsigned int size;
-} STACK;
+};
 
 
-STACK *st_init(void);
-int st_empty(STACK *);
-st_node *st_pop(STACK *);
-int st_push(const char *, STACK *);
-st_node *st_mknode(const char *);
-void st_foreach(STACK *, void (*) (st_node *));
-void st_free(STACK *);
+struct stack *st_init(void);
+int st_empty(struct stack *);
+struct st_node *st_pop(struct stack *);
+int st_push(const char *, struct stack *);
+struct st_node *st_mknode(const char *);
+void st_foreach(struct stack *, void (*) (struct st_node *));
+void st_free(struct stack *);
 
 #endif /* _STACK_H_ */

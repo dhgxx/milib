@@ -38,32 +38,32 @@
 #define BST_ENTSIZ 256
 #endif
 
-typedef enum _bst_traverse_order {
+enum bst_trv_order {
   BST_POSTORDER,
   BST_INORDER,
   BST_PREORDER
-} BST_TRV_ORDER;
+};
 
-typedef struct _bst_node {
+struct bst_node {
   char ent[BST_ENTSIZ];
-  struct _bst_node *left;
-  struct _bst_node *right;
+  struct bst_node *left;
+  struct bst_node *right;
   unsigned int deleted;
-} bst_node;
+};
 
-typedef struct _bstree {
-  bst_node *root;
+struct bstree {
+  struct bst_node *root;
   unsigned int size;
-} BSTREE;
+};
 
-bst_node *bst_mknode(const char *);
-BSTREE *bst_init(void);
-int bst_empty(BSTREE *);
-bst_node *bst_find(const char *, BSTREE *);
-int bst_ins(const char *, BSTREE *, const int);
-int bst_del(const char *, BSTREE *);
+struct bst_node *bst_mknode(const char *);
+struct bstree *bst_init(void);
+int bst_empty(struct bstree *);
+struct bst_node *bst_find(const char *, struct bstree *);
+int bst_ins(const char *, struct bstree *, const int);
+int bst_del(const char *, struct bstree *);
 
-void bst_free(BSTREE *);
-void bst_foreach(BSTREE *, BST_TRV_ORDER, void (*) (bst_node *));
+void bst_free(struct bstree *);
+void bst_foreach(struct bstree *, enum bst_trv_order, void (*) (struct bst_node *));
 
 #endif /* _BSTREE_H_ */
